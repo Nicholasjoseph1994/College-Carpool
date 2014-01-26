@@ -1,0 +1,75 @@
+{% extends "base.html"%}
+
+{% block content %}
+		
+<table>
+	<col width="90%"/>
+	<tr>
+    	<td>
+      	<h2>Search Rides</h2>
+    	</td>
+  </tr>
+</table>
+
+
+<table class="table table-hover table-responsive">
+	<style>
+		.flex-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(0, 0, 255, 0.3); color:rgb(255,255,255); 
+		border-radius: 1em; text-align: center;};
+	
+
+</style>
+  {% for ride in rides %}
+  {% if ride.passIds %}
+  {% if (ride.passIds != "") %}
+  {% set seatsLeft = ride.passengerMax - (ride.passIds.split(',')|length) %}
+  {% else %}
+  {% set seatsLeft = ride.passengerMax %}
+  {% endif %}
+  {% else %}
+  {% set seatsLeft = ride.passengerMax %}
+  {% endif %}
+
+  {% if seatsLeft > 0 %}
+  <col width="40%">
+  <col width="40%">
+  <tr>
+    <td>
+      <table class="table" style="background: rgba(0, 0, 255, 0.3); border-radius: 1em;">
+	<tr>
+	  <td><div class="flex-item">From: {{ride.start}}</div></td>
+	  <td><div class="flex-item">Seats Left: {{ seatsLeft }}</div></td>
+	  <td><div class="flex-item">Driver Name: {{ride.driverName}}</div></td>
+	</tr>
+	<tr>
+	  <td><div class="flex-item">To: {{ride.destination}}</div></td>
+	  <td><div class="flex-item">Cost: $<script>document.write(new Number({{ride.cost}}).toFixed(2));</script>
+	  </div></td>
+	  <td><div class="flex-item">Start Time: {{ride.startTime}}</div></td>
+    </tr>
+	<tr>
+		<form method="post"> 
+			<input type="hidden" name="driverId" value={{ride.driverId}} />
+			<input type="hidden" name="rideId" value={{ride.key().id()}} />
+		<td>
+			</td><td />
+		<td>
+	   <button class="btn btn-primary btn-block" style="position:relative;  align:center;" type="submit" name="submit" value="Join!"> More Information </input>
+		</form>
+	</tr>
+      </table>
+    </td>
+    <td>
+	</td>
+  </tr>
+  {% endif %}
+  {% endfor %}
+</table>
+<hr>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+{% endblock %}

@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>College Carpool</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+			body { padding-top: 70px; padding-left: 20px; background: rgba(230, 230, 255, .5); }
+			li { padding-right: 50px; }			
+			.flex-item { 
+				flex: 0 20%;
+				padding:1%; 
+				margin-bottom:1em; 
+				background: rgba(0, 0, 255, 0.3);
+				color:rgb(255,255,255);
+				border-radius: 1em;
+				text-align: center;};
+			.flex2-item {
+				flex: 0 20%;
+				padding:1%; 
+				margin-bottom:1em; 
+				background: rgba(255, 255, 0, 0.3);
+				color:rgb(0,0,0);
+				border-radius: 1em;
+				text-align: center;};
+g	</style>
+	</head>
+
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<ul class="nav navbar-nav">
+				<li><a href="/home">Home</a></li>
+				<li><a href="/postride">Post a Trip</a></li>
+				<li><a href="/view">View Rides</a></li>
+				<li><a href="/notification">Notifications</a></li>
+				<li><a href="https://api.venmo.com/oauth/authorize?client_id=1562&scope=make_payments,access_profile&response_type=code">Connect Venmo</a></li> 
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+		<!---		<li><a href="signup">Sign Up</a></li>
+				<li><a href="login">Log In</a></li>-->
+				<li><a href="logout">Log Out</a></li>
+			</ul>
+		</nav>
+	{% block content %}
+	{% endblock %}

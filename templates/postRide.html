@@ -1,0 +1,54 @@
+{% extends "base.html"%}
+
+{% block content %}
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>New Ride</title>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+			body { padding-top: 70px; }
+		</style>
+ 	</head>
+	<body>     
+		<h1>Create a New Ride:</h1>
+		<form  method = "post">
+			<div class="form-group">
+				<label>Start Location:</label>
+				<input type="text" class="form-control" name="start" value={{start}}>
+			</div>
+			<div class="form-group">
+				<label>Destination:</label>
+				<input type="text" class="form-control" name="destination" value={{destination}}>
+			</div>
+			<div class="form-group">
+				<label>Date:</label>
+				<input type="text" class="form-control" placeholder="mm/dd/yyyy" name="date" value={{startTime}} >
+			</div>
+			<div class="form-group">
+				<label>Time:</label>
+				<input type="text" class="form-control" placeholder="01:00 PM" name="time" value={{startTime}} >
+			</div>
+			<div class="form-group">
+				<label>Cost per passenger ($):</label>
+				<input type="number" min="0" max="1000" class="form-control" name="cost" value={{cost}}>
+			</div>
+			<div class="form-group">
+				<label>Maximum number of passengers:</label>
+				<input type="number" min="1" max="8" class="form-control" name="passengerMax" value={{passengerMax}}>
+			</div>
+			<div class = "error"> {{error}}</div>
+			<button class ="btn btn-primary" type="submit">Submit</button>
+
+		</form>
+		
+		<hr>
+
+	<script src="https://code.jquery.com/jquery.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<body>
+</html>
+{% endblock %}
