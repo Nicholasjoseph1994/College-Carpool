@@ -176,12 +176,14 @@ class PostRide(Handler):
 			error = "Please fill out all the fields!"
 			self.render_front(start, destination, startTime, cost, passengerMax, error)
 class Notification(Handler):
-	def get(self):
+	def writePage(self, error=''):
 		requests = list(db.GqlQuery('SELECT * FROM Request WHERE driverId=:userId', userId=self.getUser()))
 		for request in requests:
 			request.ride = Ride.get_by_id(request.rideId)
 			request.requester = User.get_by_id(request.requesterId)
-		self.render("notification.html", requests=requests)
+		self.render('notification.html', requests=requests, error=error)
+	def get(self):
+		self.writePage()
 	def post(self):
 		rideId = int(self.request.get("rideId"))
 		requesterId = int(self.request.get("requesterId"))
@@ -228,12 +230,17 @@ class Notification(Handler):
 				mail.send_mail(sender_address,[user_address,User.get_by_id(requesterId).email],subject,body)
 				#json.loads(html)
 				ride.put()
+				request = Request.get_by_id(int(self.request.get("requestId")))
+				request.delete()
+				time.sleep(.25)
+				self.redirect("/notification")
 			else:
-				redirect('/notification')
-		request = Request.get_by_id(int(self.request.get("requestId")))
-		request.delete()
-		time.sleep(.25)
-		self.redirect("/notification")
+				self.writePage(error='Please sign in with Venmo!.')
+		else:
+			request = Request.get_by_id(int(self.request.get("requestId")))
+			request.delete()
+			time.sleep(.25)
+			self.redirect("/notification")
 class oauthAuthentication(Handler):
 	def get(self):
 		AUTHORIZATION_CODE = self.request.get('code')

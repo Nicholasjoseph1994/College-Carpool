@@ -2,6 +2,7 @@
 
 {% block content %}
 		<h2>Pending Requests</h2>
+		<div style="color:red">{{error}}</div>
 		<hr>
 		{% for request in requests %}
 			<div class = "panel panel-warning">
