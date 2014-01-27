@@ -79,18 +79,14 @@ class Login(Handler):
 
 	#Renders the form with no error messages
 	def get(self):
-		rides = list(db.GqlQuery("SELECT * FROM Ride"))
-		self.render("login.html", rides=rides)
-
+		self.write_form()
 	#Deals with submitting the form
 	def post(self):
 		#Get information from the post request
 		username = self.request.get("username")
 		password = self.request.get("password")
-		userQuery = db.GqlQuery('SELECT * FROM User WHERE username=:username', username=username) #Does Query
-		userQuery = list(userQuery)
-		if len(userQuery)>0: #if the user exists
-			user = userQuery[0]
+		user = db.GqlQuery('SELECT * FROM User WHERE username=:username', username=username).get()
+		if user:
 			if validation.valid_pw(user.username, password, user.passHash): #checks if the username and password are valid
 				user_id = user.key().id()
 				#Makes and adds the cookie
