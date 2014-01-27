@@ -1,0 +1,10 @@
+Put ideas of things to add here:
+	Sort Rides
+	Get Referral Money from Venmo (Might be possible to just email them and ask about this if its not in the API)
+	Possibly make an option to pay with that square thing that looked very easy if you aren't connected to Venmo
+	Delete Old Rides, or potentially make a history page to show them
+
+
+
+Minor Things:
+	Put some verification into the Post Ride form so that we catch for poorly formatted dates/times instead of throwing an error
