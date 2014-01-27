@@ -156,17 +156,18 @@ class PostRide(Handler):
 		#date time stuff
 		date = map(int, self.request.get("date").split("/",2))
 		timeFull = self.request.get("time").split(" ")
-		time = map(int, timeFull[0].split(":"))
+		inputTime = map(int, timeFull[0].split(":"))
 
-		if "PM" in time:
-			time[0] += 12
+		if "PM" in inputTime:
+			inputTime[0] += 12
 
-		startTime = datetime.datetime(date[2],date[0],date[1],time[0],time[1],0)
+		startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
 
 		if start and destination and startTime and cost and passengerMax:
 			ride = Ride(start=start, destination=destination, startTime=startTime, cost=cost, passengerMax=passengerMax, driverId = driverId, passIds="")
 			ride.put()
 
+			time.sleep(.25) #so that it has time to enter the ride and it appears on home page
 			self.redirect("home")
 		else:
 			error = "Please fill out all the fields!"
