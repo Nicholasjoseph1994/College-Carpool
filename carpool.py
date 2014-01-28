@@ -70,8 +70,9 @@ class Handler(webapp2.RequestHandler):
 			if userId:
 				userId = int(userId)
 		return userId
-	def userLoggedIn(self):
-		return True if self.getUser() else False
+	def checkLogin(self):
+		if not self.getUser():
+			self.redirect('login')
 class Login(Handler):
 	def write_form(self, username="", error=""):
 		rides = list(db.GqlQuery("SELECT * FROM Ride"))
@@ -103,6 +104,7 @@ class Home(Handler):
 	def render_front(self, rides, requests):
 		self.render("home.html", rides=rides, requests=requests)
 	def get(self):
+		self.checkLogin()
 		if memcache.get('venmo_token'):
 			data = {'name': memcache.get('venmo_username'),
 					'consumer_id': CONSUMER_ID,
@@ -142,6 +144,7 @@ class PostRide(Handler):
 	def render_front(self, start="", destination="", startTime="", cost="", passengerMax="", error=""):
 		self.render("postRide.html", start=start, destination=destination, startTime=startTime, cost=cost, passengerMax=passengerMax, error=error)
 	def get(self):
+		self.checkLogin()
 		self.render_front()
 	def post(self):
 		start = self.request.get("start")
@@ -164,7 +167,7 @@ class PostRide(Handler):
 		startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
 
 		if start and destination and startTime and cost and passengerMax:
-			ride = Ride(start=start, destination=destination, startTime=startTime, cost=cost, passengerMax=passengerMax, driverId = driverId, passIds="")
+			ride = Ride(start=start, destination=destination, startTime=startTime, cost=cost, passengerMax=passengerMax, driverId=driverId, passIds="")
 			ride.put()
 
 			time.sleep(.25) #so that it has time to enter the ride and it appears on home page
@@ -180,6 +183,7 @@ class Notification(Handler):
 			request.requester = User.get_by_id(request.requesterId)
 		self.render('notification.html', requests=requests, error=error)
 	def get(self):
+		self.checkLogin()
 		self.writePage()
 	def post(self):
 		rideId = int(self.request.get("rideId"))
@@ -323,6 +327,7 @@ class Signup(Handler):
 			self.write_form(userError, passError, verifyError, emailError, user_username, user_email, bio=bio)
 class View(Handler):
 	def get(self):
+		self.checkLogin()
 		rides = list(db.GqlQuery("SELECT * FROM Ride ORDER BY startTime DESC", userId=self.getUser()))
 		rides = filter(lambda x: x.driverId!=self.getUser() and str(self.getUser()) not in x.passIds, rides)
 		requests = list(db.GqlQuery("SELECT * FROM Request WHERE requesterId = :userId", userId=self.getUser()))
@@ -334,12 +339,9 @@ class View(Handler):
 		self.render("rideSearch.html", rides=rides)
 	def post(self):
 		self.redirect('/'+self.request.get('rideId'))
-#		request = Request(driverId=int(self.request.get("driverId")), rideId=int(self.request.get("rideId")), requesterId=self.getUser(), message=self.request.get("message"))
-#		request.put()
-#		time.sleep(.25)
-#		self.redirect("/view")
 class RidePage(Handler):
 	def get(self, rideId):
+		self.checkLogin()
 		ride = Ride.get_by_id(int(rideId))
 		ride.driverName = User.get_by_id(ride.driverId).username
 		self.render("ride.html", ride=ride)

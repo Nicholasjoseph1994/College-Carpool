@@ -4,7 +4,7 @@ Put ideas of things to add here:
 	Possibly make an option to pay with that square thing that looked very easy if you aren't connected to Venmo
 	Delete Old Rides, or potentially make a history page to show them
 	Possibly get the autocompleting location text boxes google maps has
-	We should really have some form of authentication that actually works (we have some cookie stuff but I think we need to check cookies on every page and redirect back to the main page if the cookie doesnt exist)
+	We should really have some form of authentication that actually works (we have some cookie stuff but I think we need to check cookies on every page and redirect back to the main page if the cookie doesnt exist) - <<I think this works now>>
 
 Minor Things:
 	Put some verification into the Post Ride form so that we catch for poorly formatted dates/times instead of throwing an error
