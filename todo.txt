@@ -6,7 +6,7 @@ Put ideas of things to add here:
 				  Also, it maxes out at $340 so we might wanna find something to do about this.
 				  Maybe redirect to differenct accounts everytime we reach a new 68? 
 	Possibly make an option to pay with that square thing that looked very easy if you aren't connected to Venmo -- Yes this is easy with square cash
-	Delete Old Rides, or potentially make a history page to show them
+	Delete Old Rides, or potentially make a history page to show them - DONE (well it deletes rides atm)
 	Allow users to delete rides that they have posted as long as no one commited to them
 	Possibly get the autocompleting location text boxes google maps has
 	We should really have some form of authentication that actually works (we have some cookie stuff but I think we need to check cookies on every page and redirect back to the main page if the cookie doesnt exist) - <<I think this works now>>
