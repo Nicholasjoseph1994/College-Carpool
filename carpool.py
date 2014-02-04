@@ -46,23 +46,24 @@ class Request(db.Model):
 	requesterId = db.IntegerProperty(required=True)
 	message = db.TextProperty(required=False)
 
+
+
 ###########################################################################
 #######                       Handler Classes:                      #######
 ###########################################################################
 
 class Handler(webapp2.RequestHandler):
+	#writes to the page
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
+	#returns as a string the html of the page
 	def render_str(self, template, **params):
 		t = jinja_env.get_template(template)
 		return t.render(params)
+	#renders the page
 	def render(self, template, **kw):
 		self.write(self.render_str(template, **kw))
-	def escapeJson(self, page):
-		for index, i in enumerate(page):
-			if i == "\"":
-				page = page[:index] + "\\" + page[index:]
-		return page
+	#returns the id of the current user
 	def getUser(self):
 		userId = self.request.cookies.get('user')
 		if userId:
@@ -70,9 +71,18 @@ class Handler(webapp2.RequestHandler):
 			if userId:
 				userId = int(userId)
 		return userId
+	#checks if user is logged in and redirects to login page if not
 	def checkLogin(self):
 		if not self.getUser():
 			self.redirect('login')
+	#Deletes past rides
+	def deleteOldRides(self):
+		rides = [ride for ride in Ride.all() if ride.startTime< datetime.datetime.now()]
+		for ride in rides:
+			for request in Request.all():
+				if request.rideId == ride.key().id():
+					request.delete()
+			ride.delete()
 class Login(Handler):
 	def write_form(self, username="", error=""):
 		rides = list(db.GqlQuery("SELECT * FROM Ride"))
@@ -104,6 +114,8 @@ class Home(Handler):
 	def render_front(self, rides, requests):
 		self.render("home.html", rides=rides, requests=requests)
 	def get(self):
+		self.deleteOldRides()
+		time.sleep(.25)
 		self.checkLogin()
 		if memcache.get('venmo_token'):
 			data = {'name': memcache.get('venmo_username'),
@@ -327,6 +339,7 @@ class Signup(Handler):
 			self.write_form(userError, passError, verifyError, emailError, user_username, user_email, bio=bio)
 class View(Handler):
 	def get(self):
+		self.deleteOldRides()
 		self.checkLogin()
 		rides = list(db.GqlQuery("SELECT * FROM Ride ORDER BY startTime DESC", userId=self.getUser()))
 		rides = filter(lambda x: x.driverId!=self.getUser() and str(self.getUser()) not in x.passIds, rides)

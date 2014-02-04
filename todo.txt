@@ -18,7 +18,7 @@ Minor Things:
 Glitches (basically any thing that causes a server crash):
 	Negative Dates cause a crash
 	submitting an empty form for Post Ride gives errors
-	cost 0 wasn't working at the hackathon, we should make sure that is possible -- REALLY? Do we want to allow free rides?
-
+	cost 0 wasn't working at the hackathon, we should make sure that is possible -- REALLY? Do we want to allow free rides? (This is Nick - it might be good if people just want company for a drive or something. Any reason not to allow it?)
+	
 Questions:
 	Who actually needs to be logged into Venmo? If I ask someone to join their ride, then log out completely, and then they accept, can I still be charged? This is unclear. Need to figure it out
