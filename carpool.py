@@ -172,23 +172,24 @@ class PostRide(Handler):
 			if driverId:
 				driverId = int(driverId)
 		#date time stuff
-		date = map(int, dateInput.split("/",2))
-		timeFull = timeInput.split(" ")
-		inputTime = map(int, timeFull[0].split(":"))
+		if start and destination and cost and passengerMax and dateInput and timeInput:
+			date = map(int, dateInput.split("/",2))
+			timeFull = timeInput.split(" ")
+			inputTime = map(int, timeFull[0].split(":"))
 
-		if "PM" in inputTime:
-			inputTime[0] += 12
+			if "PM" in inputTime:
+				inputTime[0] += 12
 
-		startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
-		if startTime < datetime.datetime.now():
-			error = "You can't create past rides"
-			self.render_front(start, destination, '', '', cost, passengerMax, error)
-		elif start and destination and startTime and cost and passengerMax:
-			ride = Ride(start=start, destination=destination, startTime=startTime, cost=float(cost), passengerMax=int(passengerMax), driverId=driverId, passIds="")
-			ride.put()
+			startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
+			if startTime < datetime.datetime.now():
+				error = "You can't create past rides"
+				self.render_front(start, destination, '', '', cost, passengerMax, error)
+			else:
+				ride = Ride(start=start, destination=destination, startTime=startTime, cost=float(cost), passengerMax=int(passengerMax), driverId=driverId, passIds="")
+				ride.put()
 
-			time.sleep(.25) #so that it has time to enter the ride and it appears on home page
-			self.redirect("home")
+				time.sleep(.25) #so that it has time to enter the ride and it appears on home page
+				self.redirect("home")
 		else:
 			error = "Please fill out all the fields!"
 			self.render_front(start, destination, dateInput, timeInput, cost, passengerMax, error)
