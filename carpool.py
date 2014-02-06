@@ -148,6 +148,13 @@ class Home(Handler):
 			ride.driverEmail = User.get_by_id(ride.driverId).email
 			request.ride = ride
 		self.render_front(rides, requests)
+	#This is for if they are cancelling a ride
+	def post(self):
+		rideId = int(self.request.get("rideId"))
+		ride = Ride.get_by_id(rideId)
+		ride.delete()
+		time.sleep(.25)
+		self.redirect('home')
 class Logout(Handler):
 	def get(self):
 		self.response.headers.add_header('Set-Cookie', str('user=; Path=/'))

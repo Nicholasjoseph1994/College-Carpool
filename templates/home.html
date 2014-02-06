@@ -41,6 +41,17 @@
 					</td>
 				</tr>
 			</tr>
+			{% if ride.passengers|length == 0%}
+				<tr>
+					<td/>
+					<td>
+						<form method="post">
+							<button type="submit" class="btn btn-danger" style="position: relative; padding-left: 37.5%; padding-right: 37.5%; bottom: 5px">Cancel Ride</button>
+							<input name="rideId" value="{{ride.key().id()}}" type="hidden" />
+						</form>
+					</td>
+				</tr>
+			{% endif %}
 			<hr>
 		</table>
 		{% endfor %}
