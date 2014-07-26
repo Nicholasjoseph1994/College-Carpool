@@ -1,6 +1,10 @@
 import webapp2
 import os
 import jinja2
+import validation
+from database import *
+import datetime
+
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 class Handler(webapp2.RequestHandler):
@@ -28,7 +32,7 @@ class Handler(webapp2.RequestHandler):
 			self.redirect('login')
 	#Deletes past rides
 	def deleteOldRides(self):
-		rides = [ride for ride in Ride.all() if ride.startTime< datetime.datetime.now()]
+		rides = [ride for ride in Ride.all() if ride.startTime < datetime.datetime.now()]
 		for ride in rides:
 			for request in Request.all():
 				if request.rideId == ride.key().id():

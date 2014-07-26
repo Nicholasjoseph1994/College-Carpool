@@ -1,4 +1,5 @@
 Put ideas of things to add here:
+	Fix oauth (Venmo changed something so that needs to be verified)
 	Email verification (The only Brown thing is pointless if anyone can just type @brown)
 	Sort Rides
     Search Rides - Should be able to search by start location, destination, time, and cost at least. Should also add something that lets passengers search for trips that don't necessarily start where they are, but the path travels through their location

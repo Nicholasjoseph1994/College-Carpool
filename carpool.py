@@ -1,20 +1,5 @@
-import os
 import sys
 import webapp2
-import jinja2
-import validation
-import json
-import time
-import logging
-import datetime
-import urllib
-import urllib2
-import cookielib
-import socket
-from google.appengine.ext import db
-from google.appengine.api import memcache
-from google.appengine.api import mail
-from constants import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET
 
 sys.path.append('handlers')
 from MainPage import MainPage

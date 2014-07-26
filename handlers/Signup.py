@@ -1,7 +1,8 @@
-
 from google.appengine.ext import db
 from Handler import Handler
 from database import *
+import validation
+
 class Signup(Handler):
 	#Writes the form with the rides passed as a parameter for the map
 	def write_form(self, userError="", passError="", verifyError="", emailError="", username="", email="", bio=""):
