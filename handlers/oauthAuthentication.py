@@ -1,7 +1,14 @@
-
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from Handler import Handler
 from database import *
+import json
+import urllib2
+import urllib
+import socket
+import cookielib
+
+
 class oauthAuthentication(Handler):
 	def get(self):
 		AUTHORIZATION_CODE = self.request.get('code')
