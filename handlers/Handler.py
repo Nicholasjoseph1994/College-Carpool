@@ -5,20 +5,21 @@ import validation
 from database import *
 import datetime
 
+#Lines for using HTML templates
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 class Handler(webapp2.RequestHandler):
-	#writes to the page
+	#Writes to the page
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
-	#returns as a string the html of the page
+	#Returns as a string the html of the page
 	def render_str(self, template, **params):
 		t = jinja_env.get_template(template)
 		return t.render(params)
-	#renders the page
+	#Renders the page
 	def render(self, template, **kw):
 		self.write(self.render_str(template, **kw))
-	#returns the id of the current user
+	#Returns the id of the current user if logged in else None
 	def getUser(self):
 		userId = self.request.cookies.get('user')
 		if userId:
@@ -26,7 +27,7 @@ class Handler(webapp2.RequestHandler):
 			if userId:
 				userId = int(userId)
 		return userId
-	#checks if user is logged in and redirects to login page if not
+	#Checks if user is logged in and redirects to login page if not
 	def checkLogin(self):
 		if not self.getUser():
 			self.redirect('login')

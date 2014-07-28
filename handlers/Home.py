@@ -4,9 +4,11 @@ from database import *
 import time
 from google.appengine.api import memcache
 from constants import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET
+
 class Home(Handler):
 	def render_front(self, rides, requests):
 		self.render("home.html", rides=rides, requests=requests)
+
 	def get(self):
 		self.deleteOldRides()
 		time.sleep(.25)
@@ -19,7 +21,6 @@ class Home(Handler):
 		else:
 			data = {'signed_into_venmo': False,
 					'consumer_id': CONSUMER_ID}
-
 		#Rides
 		rides = list(Ride.all())
 		userId = self.getUser()
@@ -42,6 +43,7 @@ class Home(Handler):
 			ride.driverEmail = User.get_by_id(ride.driverId).email
 			request.ride = ride
 		self.render_front(rides, requests)
+
 	#This is for if they are cancelling a ride
 	def post(self):
 		rideId = int(self.request.get("rideId"))

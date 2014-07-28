@@ -6,12 +6,15 @@ import datetime
 import time
 
 class PostRide(Handler):
+	#Renders the form
 	def render_front(self, start="", destination="", startDate="", startTime="", cost="", passengerMax="", error=""):
 		self.render("postRide.html", start=start, destination=destination, startDate=startDate, startTime=startTime, cost=cost, passengerMax=passengerMax, error=error)
+
 	def get(self):
 		self.checkLogin()
 		self.render_front()
-	#This method needs to be reordered so that it checks for all of the fields being full first thing
+
+	#Posts a new ride for people to join
 	def post(self):
 		start = self.request.get("start")
 		destination = self.request.get("destination")
@@ -19,17 +22,15 @@ class PostRide(Handler):
 		passengerMax = self.request.get("passengerMax")
 		dateInput = self.request.get("date")#The plain string input
 		timeInput = self.request.get("time")#The plain string input
-		driverId = self.request.cookies.get('user')
-		if driverId:
-			driverId = validation.check_secure_val(driverId)
-			if driverId:
-				driverId = int(driverId)
+		driverId = self.getUser()
+
 		#date time stuff
 		if start and destination and cost and passengerMax and dateInput and timeInput:
 			date = map(int, dateInput.split("/",2))
 			timeFull = timeInput.split(" ")
 			inputTime = map(int, timeFull[0].split(":"))
 
+			#Checks AM/PM
 			if "PM" in inputTime:
 				inputTime[0] += 12
 

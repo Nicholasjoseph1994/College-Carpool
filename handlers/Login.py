@@ -2,6 +2,7 @@ from google.appengine.ext import db
 from Handler import Handler
 from database import *
 import validation
+
 class Login(Handler):
 	def write_form(self, username="", error=""):
 		rides = list(db.GqlQuery("SELECT * FROM Ride"))
@@ -10,6 +11,7 @@ class Login(Handler):
 	#Renders the form with no error messages
 	def get(self):
 		self.write_form()
+
 	#Deals with submitting the form
 	def post(self):
 		#Get information from the post request
