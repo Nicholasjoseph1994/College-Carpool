@@ -1,5 +1,7 @@
 Put ideas of things to add here:
 	Fix oauth (Venmo changed something so that needs to be verified)
+	We might want to rethink the ordering of how payments work. Right now in theory the payment goes through when the driver clicks accept, but the person paying might not even be logged in. I'm not sure if that will actually work and also think it might be unclear to users when they are paying
+	Make login actually secure (very important if we actually get users for this)
 	Email verification (The only Brown thing is pointless if anyone can just type @brown)
 	Sort Rides
     Search Rides - Should be able to search by start location, destination, time, and cost at least. Should also add something that lets passengers search for trips that don't necessarily start where they are, but the path travels through their location
@@ -8,8 +10,6 @@ Put ideas of things to add here:
 				  Also, it maxes out at $340 so we might wanna find something to do about this.
 				  Maybe redirect to differenct accounts everytime we reach a new 68? 
 	Possibly make an option to pay with that square thing that looked very easy if you aren't connected to Venmo -- Yes this is easy with square cash
-	Delete Old Rides, or potentially make a history page to show them - DONE (well it deletes rides atm)
-	Allow users to delete rides that they have posted as long as no one commited to them <<DONE>>
 	Possibly get the autocompleting location text boxes google maps has
 	We should really have some form of authentication that actually works (we have some cookie stuff but I think we need to check cookies on every page and redirect back to the main page if the cookie doesnt exist) - <<I think this works now>>
 	Mobile integration, phones and tablets
@@ -20,8 +20,14 @@ Minor Things:
 
 Glitches (basically any thing that causes a server crash):
 	Negative Dates cause a crash
-	submitting an empty form for Post Ride gives errors
 	cost 0 wasn't working at the hackathon, we should make sure that is possible -- REALLY? Do we want to allow free rides? (This is Nick - it might be good if people just want company for a drive or something. Any reason not to allow it?)
+	allRides page is blank if there are no rides (Should probably show a blank map or some text)
+	There is no link to allRides. The only way there is typing in the url
 	
 Questions:
 	Who actually needs to be logged into Venmo? If I ask someone to join their ride, then log out completely, and then they accept, can I still be charged? This is unclear. Need to figure it out
+
+Things that are done:
+	Delete Old Rides, or potentially make a history page to show them - DONE (well it deletes rides atm)
+	Allow users to delete rides that they have posted as long as no one commited to them <<DONE>>
+	submitting an empty form for Post Ride gives errors - DONE
