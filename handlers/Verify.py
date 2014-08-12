@@ -18,9 +18,9 @@ class Verify(Handler):
             if code == user.activationCode:
                 user.activated = True
                 user.put()
-                self.render("verify.html", color="green", status="Successfully Verified :)")
-                sleep(2.0)
-                self.redirect("/home")
+                #self.render("verify.html", color="green", status="Successfully Verified :)")
+                #sleep(2.0)
+                self.redirect("/view")
             else:
                 self.render("verify.html", color="red", status="Not the right activation code :(")
 
