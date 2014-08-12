@@ -1,15 +1,21 @@
 {% extends "base.html"%}
 
 {% block content %}
+	<script src="https://code.jquery.com/jquery.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+	<script type="text/javascript" src="static/js/postRide.js"></script>
+	
 		<h1>Create a New Ride:</h1>
+		
 		<form  method = "post">
 			<div class="form-group">
 				<label>Start Location:</label>
-				<input type="text" class="form-control" name="start" value="{{start}}">
+				<input type="text" class="form-control autocomplete" name="start" value="{{start}}">
 			</div>
 			<div class="form-group">
 				<label>Destination:</label>
-				<input type="text" class="form-control" name="destination" value="{{destination}}">
+				<input type="text" class="form-control autocomplete" name="destination" value="{{destination}}">
 			</div>
 			<div class="form-group">
 				<label>Date:</label>
@@ -33,9 +39,6 @@
 		</form>
 		
 		<hr>
-
-	<script src="https://code.jquery.com/jquery.js"></script>
-	<script src="/static/js/bootstrap.min.js"></script>
 	</body>
 </html>
 {% endblock %}

@@ -22,7 +22,7 @@ class PostRide(Handler):
 		#Validates all of the input from the form
 		def validate_inputs(start, destination, cost, passengerMax, dateInput, timeInput):
 			MAXIMUM_SIZE = 8
-			TIME_PATTERN = re.compile(r"^((0?[1-9])|(1[0-2])):[0-5]\d [AP]M$")
+			TIME_PATTERN = re.compile(r"^((0?[1-9])|(1[0-2])):[0-5]\d\s*([AP]M|[ap]m)$")
 			res = True
 			error = ""
 			if not start:
