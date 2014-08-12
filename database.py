@@ -16,8 +16,8 @@ class User(db.Model):
 	email = db.StringProperty(required=False)
 	bio = db.TextProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
-	activationCode = db.StringProperty(required=True)
-	activated = db.BooleanProperty(required=True, default=False)
+	activationCode = db.StringProperty()
+	activated = db.BooleanProperty(default=False)
 #Table for requests
 class Request(db.Model):
 	driverId = db.IntegerProperty(required=True)

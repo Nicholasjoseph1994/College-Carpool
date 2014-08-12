@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% extends "base.html"%}
+
  {% block content %} 
 <html>
 	<head>
@@ -11,15 +12,12 @@
 
 	<body>
 	    <h1 align="center" id="title"><font color="8A2BE2" >College Carpool</font></h1>
+	    <h3 align="center" id="title"><font color="8A2BE2" >Please check your email for a verification link</font></h3>
 		<form class="form-horizontal" align="center" method="post">
-			<div class="form-group" align="center">
-				<label class="col-sm-4 control-label" > Activation Code:</label>
-				<input type="text" size="40" class="col-sm-4" placeholder="Activation Code" name= "code" >
-			</div>
-			<div style = "color:red">{{error}}</div>
+			<div style = "color:{{color}}">{{status}}</div>
 		
 			<div class="form-group">
-				<button type="submit" class="btn btn-success">Activate</button>
+				<button type="submit" class="btn btn-success">Send Code Again</button>
 			</div>
 		</form>
 	</body>

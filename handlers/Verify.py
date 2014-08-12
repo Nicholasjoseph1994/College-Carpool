@@ -5,16 +5,29 @@ Created on Aug 12, 2014
 '''
 from Handler import Handler
 from database import User
+from time import sleep
 
 class Verify(Handler):
     def get(self):
-        self.render("verify.html")
-        
-    def post(self):
+        self.checkLogin(validate=False)
+        code = self.request.get("code")
         user = User.get_by_id(self.getUser())
-        if user.activationCode == self.request.get("code"):
-            user.activated = True
-            user.put()
-            self.redirect("/home")
+        if not code:
+            self.render("verify.html") 
         else:
-            self.render("verify.html", error="Not the right activation code :(")
+            if code == user.activationCode:
+                user.activated = True
+                user.put()
+                self.render("verify.html", color="green", status="Successfully Verified :)")
+                sleep(2.0)
+                self.redirect("/home")
+            else:
+                self.render("verify.html", color="red", status="Not the right activation code :(")
+
+    def post(self):
+        try:
+            user = User.get_by_id(self.getUser())
+            self.sendActivationEmail(user.email, user.activationCode)
+            self.render("verify.html", color="green", status="Email Sent")
+        except:
+            self.render("verify.html", color="end", status="Email failed to send")

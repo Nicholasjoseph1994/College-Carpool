@@ -1,5 +1,4 @@
 from google.appengine.ext import db
-from google.appengine.api import mail
 
 #from django.core.urlresolvers import reverse
 from Handler import Handler
@@ -59,16 +58,3 @@ class Signup(Handler):
 		else:
 			self.write_form(userError, passError, verifyError, emailError, user_username, user_email, bio=bio)
 	
-	def getVerifyURL(self):
-		return "http://%s/%s" % (self.request.host, 'verify')
-
-	def sendActivationEmail(self, email, code):
-		message = mail.EmailMessage()
-		message.sender = "notifications@college-carpool.appspotmail.com"
-		message.to = email
-		message.subject = "Thank you for signing up with College Carpool!"
-		message.body = "Thank you for using college-carpool. In order to activate your account, please go to this link:\n\n %s \n\nand put in this activation code: %s" \
-			% (self.getVerifyURL(), code)
-		print message.body
-		message.Send()
-		

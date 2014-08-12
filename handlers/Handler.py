@@ -3,6 +3,7 @@ import os
 import jinja2
 import validation
 from database import *
+from google.appengine.api import mail
 import datetime
 
 #Lines for using HTML templates
@@ -28,11 +29,11 @@ class Handler(webapp2.RequestHandler):
 				userId = int(userId)
 		return userId
 	#Checks if user is logged in and redirects to login page if not
-	def checkLogin(self):
+	def checkLogin(self, validate=True):
 		userID = self.getUser()
 		if not userID:
 			self.redirect('login')
-		elif not User.get_by_id(userID).activated:
+		if validate and not User.get_by_id(userID).activated:
 			self.redirect('verify')
 	#Deletes past rides
 	def deleteOldRides(self):
@@ -42,3 +43,16 @@ class Handler(webapp2.RequestHandler):
 				if request.rideId == ride.key().id():
 					request.delete()
 			ride.delete()
+	
+	def sendActivationEmail(self, email, code):
+		message = mail.EmailMessage()
+		message.sender = "notifications@college-carpool.appspotmail.com"
+		message.to = email
+		message.subject = "Thank you for signing up with College Carpool!"
+		message.body = "Thank you for using college-carpool. In order to activate your account, please go to this link:\n\n %s" \
+			% (self.getVerifyURL(code))
+		print message.body
+		message.Send()
+		
+	def getVerifyURL(self, code):
+		return "http://%s/%s?code=%s" % (self.request.host, 'verify', code)
