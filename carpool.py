@@ -13,7 +13,17 @@ from Notification import Notification
 from RidePage import RidePage
 from oauthAuthentication import oauthAuthentication
 from AllRides import AllRides
+from Verification import Verification
 
+config = {
+  'webapp2_extras.auth': {
+    'user_model': 'database.User',
+    'user_attributes': ['username', 'email', 'bio']
+  },
+  'webapp2_extras.sessions': {
+    'secret_key': 'YOUR_SECRET_KEY'
+  }
+}
 application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/home', Home),
 										('/signup', Signup),
@@ -24,6 +34,13 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/notification', Notification),
 										('/(\d+)', RidePage),
 										('/oauth-authorized', oauthAuthentication),
-										('/allrides', AllRides)
-										], debug = True)
+										('/allrides', AllRides),
+										webapp2.Route(
+											'/<type:v|p>/<user_id:\d+>-<signup_token:.+>',
+											handler=Verification,
+											name='verification'
+											)
+										],
+										config=config,
+										debug = True)
 

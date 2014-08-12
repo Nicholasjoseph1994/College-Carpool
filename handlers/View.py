@@ -1,4 +1,3 @@
-
 from google.appengine.ext import db
 from Handler import Handler
 from database import *
