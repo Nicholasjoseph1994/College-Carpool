@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+ {% block content %} 
+<html>
+	<head>
+		<title> College Carpool</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<script src="/static/js/bootstrap.min.js"></script>
+	</head>
+
+	<body>
+	    <h1 align="center" id="title"><font color="8A2BE2" >College Carpool</font></h1>
+		<form class="form-horizontal" align="center" method="post">
+			<div class="form-group" align="center">
+				<label class="col-sm-4 control-label" > Activation Code:</label>
+				<input type="text" size="40" class="col-sm-4" placeholder="Activation Code" name= "code" >
+			</div>
+			<div style = "color:red">{{error}}</div>
+		
+			<div class="form-group">
+				<button type="submit" class="btn btn-success">Activate</button>
+			</div>
+		</form>
+	</body>
+</html>
+{% endblock %}

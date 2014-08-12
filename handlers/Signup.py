@@ -1,4 +1,7 @@
 from google.appengine.ext import db
+from google.appengine.api import mail
+
+#from django.core.urlresolvers import reverse
 from Handler import Handler
 from database import *
 import validation
@@ -7,6 +10,7 @@ class Signup(Handler):
 	#Writes the form with the rides passed as a parameter for the map
 	def write_form(self, userError="", passError="", verifyError="", emailError="", username="", email="", bio=""):
 		rides = list(db.GqlQuery("SELECT * FROM Ride"))
+		# need to get just a few, perhaps 10-20
 		self.render("signup.html", rides=rides, userError=userError, passError=passError, verifyError=verifyError, emailError=emailError, username=username, email=email, bio=bio)
 	def get(self):
 		self.write_form()
@@ -39,16 +43,32 @@ class Signup(Handler):
 
 		if username and password and verify and email:
 			passHash = validation.make_pw_hash(username, password)
-			user= User(username = username, passHash = passHash, email = email, bio=bio)
+			code = validation.make_salt()
+			
+			user= User(username = username, passHash = passHash, email = email, bio=bio, activationCode=code)
 			u = User.all().filter('username =', username).get()
 			if u:
-				rides = list(db.GqlQuery("SELECT * FROM Ride"))
 				self.write_form("That username is already taken.", passError, verifyError, emailError, "", user_email, bio=bio)
 				return
 			user_id = user.put().id()
 			self.response.headers['Content-Type'] = 'text/plain'
 			cookie_val = validation.make_secure_val(str(user_id))
 			self.response.headers.add_header('Set-Cookie',str('user=%s; Path=/' % cookie_val))
+			self.sendActivationEmail(email, code)
 			self.redirect("/home")
 		else:
 			self.write_form(userError, passError, verifyError, emailError, user_username, user_email, bio=bio)
+	
+	def getVerifyURL(self):
+		return "http://%s/%s" % (self.request.host, 'verify')
+
+	def sendActivationEmail(self, email, code):
+		message = mail.EmailMessage()
+		message.sender = "notifications@college-carpool.appspotmail.com"
+		message.to = email
+		message.subject = "Thank you for signing up with College Carpool!"
+		message.body = "Thank you for using college-carpool. In order to activate your account, please go to this link:\n\n %s \n\nand put in this activation code: %s" \
+			% (self.getVerifyURL(), code)
+		print message.body
+		message.Send()
+		

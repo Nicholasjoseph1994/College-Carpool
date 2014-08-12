@@ -29,8 +29,11 @@ class Handler(webapp2.RequestHandler):
 		return userId
 	#Checks if user is logged in and redirects to login page if not
 	def checkLogin(self):
-		if not self.getUser():
+		userID = self.getUser()
+		if not userID:
 			self.redirect('login')
+		elif not User.get_by_id(userID).activated:
+			self.redirect('verify')
 	#Deletes past rides
 	def deleteOldRides(self):
 		rides = [ride for ride in Ride.all() if ride.startTime < datetime.datetime.now()]

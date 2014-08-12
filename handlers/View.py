@@ -1,7 +1,8 @@
 
 from google.appengine.ext import db
 from Handler import Handler
-from database import *
+from database import User
+
 class View(Handler):
 	def get(self):
 		self.deleteOldRides()

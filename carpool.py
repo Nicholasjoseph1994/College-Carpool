@@ -13,6 +13,7 @@ from Notification import Notification
 from RidePage import RidePage
 from oauthAuthentication import oauthAuthentication
 from AllRides import AllRides
+from Verify import Verify
 
 application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/home', Home),
@@ -24,6 +25,7 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/notification', Notification),
 										('/(\d+)', RidePage),
 										('/oauth-authorized', oauthAuthentication),
-										('/allrides', AllRides)
+										('/allrides', AllRides),
+										('/verify', Verify)
 										], debug = True)
 
