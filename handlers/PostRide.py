@@ -56,7 +56,11 @@ class PostRide(Handler):
 		start = self.request.get("start")
 		destination = self.request.get("destination")
 		cost = self.request.get("cost")
-		passengerMax = int(self.request.get("passengerMax"))
+		# Makes sure that passengerMax has something in it that can be an int
+		try:
+			passengerMax = int(self.request.get("passengerMax"))
+		except ValueError:
+			passengerMax = None
 		dateInput = self.request.get("date")#The plain string input
 		timeInput = self.request.get("time")#The plain string input
 		driverId = self.getUser()
