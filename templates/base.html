@@ -17,7 +17,17 @@
 				<li><a href="/home">Home</a></li>
 				<li><a href="/postride">Post a Trip</a></li>
 				<li><a href="/view">View Rides</a></li>
-				<li><a href="/notification">Notifications (<span id="notification_count">{{notification_count}}</span>)</a></li>
+				<li>
+					<a href="/notification">Notifications
+						{% if notification_count == 0 %}
+						{% set display = "display:none;" %}
+						{% endif %}
+						<svg id="notification_count" style="{{display}}" height="15" width="15">
+						  <circle cx="7" cy="8" r="7" stroke-width="1" fill="red"/>
+						  <text x="4" y="12" font-size="12px" fill="white">{{notification_count}}</text>
+						</svg>
+					</a>
+				</li>
 				<li><a href="https://api.venmo.com/oauth/authorize?client_id=1562&scope=make_payments,access_profile&response_type=code">Connect Venmo</a></li> 
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
@@ -45,8 +55,12 @@
 			};
 			
 			updateNotifications = function() {
+				if (!state.notification_count) {
+					state.notification_count = 0;
+				}
 				state.notification_count += 1;
-				$("#notification_count").html(state.notification_count);
+				$("#notification_count").css("display","");
+				$("#notification_count text").html(state.notification_count);
 			};
 			
 		    if (state.token) {

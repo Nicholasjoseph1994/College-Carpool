@@ -64,6 +64,7 @@ class Handler(webapp2.RequestHandler):
 		channel_token = self.session.get('channel_token')
 		if userId and channel_token is None: 
 			channel_token = channel.create_channel(str(userId))
+			#self.response.set_cookie('channel_token', channel_token)
 			self.session['channel_token'] = channel_token
 			print str(userId) + " created channel w/ token= " + channel_token
 			

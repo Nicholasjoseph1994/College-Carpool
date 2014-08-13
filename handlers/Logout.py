@@ -3,4 +3,5 @@ class Logout(Handler):
 	def get(self):
 		#self.response.headers.add_header('Set-Cookie', str('user=; Path=/'))
 		self.response.delete_cookie('user')
+		self.session['channel_token'] = None
 		self.redirect("login")
