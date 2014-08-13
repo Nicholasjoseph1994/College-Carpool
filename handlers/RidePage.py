@@ -10,7 +10,8 @@ class RidePage(Handler):
 		ride.driverName = User.get_by_id(ride.driverId).username
 		self.render("ride.html", ride=ride)
 	def post(self, rideId):
-		request = Request(driverId=int(self.request.get('driverId')), rideId=int(self.request.get('rideId')), requesterId=self.getUser(), message=self.request.get('message'))
+		driverId=int(self.request.get('driverId'))
+		request = Request(driverId=driverId, rideId=int(self.request.get('rideId')), requesterId=self.getUser(), message=self.request.get('message'))
 		request.put()
 		time.sleep(.5)
 		self.redirect("/home")

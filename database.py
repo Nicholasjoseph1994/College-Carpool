@@ -24,3 +24,25 @@ class Request(db.Model):
 	rideId = db.IntegerProperty(required=True)
 	requesterId = db.IntegerProperty(required=True)
 	message = db.TextProperty(required=False)
+	
+	def put(self):
+		super(Request, self).put()
+		# add a PassengerRequestNotification to driverId
+		requestNotification = PassengerRequestNotification(requestId=self.key().id(), driverId=self.driverId, type="passenger-request")
+		requestNotification.put()
+	
+	def delete(self):
+		PassengerRequestNotification.gql("WHERE requestId=%s" % (self.key().id())).get().delete()
+		super(Request, self).delete()
+		
+#Table for requester->driver notifications
+class PassengerRequestNotification(db.Model):
+	requestId = db.IntegerProperty(required=True)
+	driverId = db.IntegerProperty(required=True)
+	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
+	
+#Table for driver->requester notifications
+class DriverResponseNotification(db.Model):
+	rideId = db.IntegerProperty(required=True)
+	requesterId = db.IntegerProperty(required=True)
+	type = db.StringProperty(required=True, choices=set(["accepted-ride","rejected-ride"]))

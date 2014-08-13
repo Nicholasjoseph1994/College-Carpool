@@ -19,11 +19,15 @@ class Handler(webapp2.RequestHandler):
 		return t.render(params)
 	#Renders the page
 	def render(self, template, **kw):
+		# get notification_count
+		notification_count = \
+			db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
+			db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
 		try:
 			username = User.get_by_id(self.getUser()).username
-			self.write(self.render_str(template, username=username, **kw))
+			self.write(self.render_str(template, username=username, notification_count=notification_count, **kw))
 		except:
-			self.write(self.render_str(template, **kw))
+			self.write(self.render_str(template, notification_count=notification_count, **kw))
 	#Returns the id of the current user if logged in else None
 	def getUser(self):
 		userId = self.request.cookies.get('user')
