@@ -1,0 +1,29 @@
+body { 
+	padding-top: 70px; 
+	padding-left: 20px; 
+	background: rgba(230, 230, 255, .5); 
+}
+
+li { 
+	padding-right: 50px; 
+}			
+			
+.flex-item { 
+	flex: 0 20%;
+	padding:1%; 
+	margin-bottom:1em; 
+	background: rgba(0, 0, 255, 0.3);
+	color:rgb(255,255,255);
+	border-radius: 1em;
+	text-align: center;
+}
+
+.flex2-item {
+	flex: 0 20%;
+	padding:1%; 
+	margin-bottom:1em; 
+	background: rgba(255, 255, 0, 0.3);
+	color:rgb(0,0,0);
+	border-radius: 1em;
+	text-align: center;
+}

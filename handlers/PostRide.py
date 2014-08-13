@@ -1,12 +1,9 @@
 from google.appengine.ext import db
 from Handler import Handler
 from database import *
-import validation
 import datetime
 import time
-import logging
 import re
-import string
 
 class PostRide(Handler):
 	#Renders the form

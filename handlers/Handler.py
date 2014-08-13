@@ -19,7 +19,11 @@ class Handler(webapp2.RequestHandler):
 		return t.render(params)
 	#Renders the page
 	def render(self, template, **kw):
-		self.write(self.render_str(template, **kw))
+		try:
+			username = User.get_by_id(self.getUser()).username
+			self.write(self.render_str(template, username=username, **kw))
+		except:
+			self.write(self.render_str(template, **kw))
 	#Returns the id of the current user if logged in else None
 	def getUser(self):
 		userId = self.request.cookies.get('user')
