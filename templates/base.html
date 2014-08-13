@@ -8,6 +8,7 @@
 		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/static/css/base.css" rel="stylesheet">
 		<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="_ah/channel/jsapi"></script>
 	</head>
 
 	<body>
@@ -16,7 +17,7 @@
 				<li><a href="/home">Home</a></li>
 				<li><a href="/postride">Post a Trip</a></li>
 				<li><a href="/view">View Rides</a></li>
-				<li><a href="/notification">Notifications <span>({{notification_count}})</span></a></li>
+				<li><a href="/notification">Notifications (<span id="notification_count">{{notification_count}}</span>)</a></li>
 				<li><a href="https://api.venmo.com/oauth/authorize?client_id=1562&scope=make_payments,access_profile&response_type=code">Connect Venmo</a></li> 
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
@@ -26,5 +27,44 @@
 				<li><a href="logout">Log Out</a></li>
 			</ul>
 		</nav>
+		
+		<script>
+			var state = { 
+				username: '{{ username }}',
+				token: '{{ token }}',
+				notification_count: parseInt('{{ notification_count }}')
+			};
+						    
+		    onOpened = function() {
+				connected = true;
+			};
+			      
+			onMessage = function(m) {
+				//alert(state.token + " received " + m);
+				updateNotifications();
+			};
+			
+			updateNotifications = function() {
+				state.notification_count += 1;
+				$("#notification_count").html(state.notification_count);
+			};
+			
+		    if (state.token) {
+			    var channel = new goog.appengine.Channel(state.token);
+			    var handler = {
+				   'onopen': onOpened,
+				   'onmessage': onMessage
+				};
+		  		var socket = channel.open(handler);
+			    socket.onopen = onOpened;
+			    socket.onmessage = onMessage;
+			    socket.onerror = function(e){
+	                alert("error:"+e['description']);
+	            };
+	            socket.onclose = function(){
+	                alert("close");
+	            };
+		    }
+		</script>
 	{% block content %}
 	{% endblock %}

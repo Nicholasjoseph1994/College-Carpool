@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import channel
 from Handler import Handler
 from database import *
 import time
@@ -13,5 +14,7 @@ class RidePage(Handler):
 		driverId=int(self.request.get('driverId'))
 		request = Request(driverId=driverId, rideId=int(self.request.get('rideId')), requesterId=self.getUser(), message=self.request.get('message'))
 		request.put()
+		#print "Sending message to " + str(driverId)
+		channel.send_message(str(driverId), "{}");
 		time.sleep(.5)
 		self.redirect("/home")

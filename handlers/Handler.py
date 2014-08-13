@@ -3,31 +3,55 @@ import os
 import jinja2
 import validation
 from database import *
-from google.appengine.api import mail
+from google.appengine.api import mail, channel
+from webapp2_extras import sessions, sessions_memcache
 import datetime
 
 #Lines for using HTML templates
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
+
 class Handler(webapp2.RequestHandler):
+	def dispatch(self):
+		# Get a session store for this request.
+		self.session_store = sessions.get_store(request=self.request)
+
+		try:
+			# Dispatch the request.
+			webapp2.RequestHandler.dispatch(self)
+		finally:
+			# Save all sessions.
+			self.session_store.save_sessions(self.response)
+
+	@webapp2.cached_property
+	def session(self):
+		# Returns a session using the default cookie key.
+		return self.session_store.get_session(name='mc_session',
+			factory=sessions_memcache.MemcacheSessionFactory)
+	
 	#Writes to the page
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
+		
 	#Returns as a string the html of the page
 	def render_str(self, template, **params):
 		t = jinja_env.get_template(template)
 		return t.render(params)
+	
 	#Renders the page
 	def render(self, template, **kw):
-		# get notification_count
-		notification_count = \
-			db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
-			db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
 		try:
 			username = User.get_by_id(self.getUser()).username
-			self.write(self.render_str(template, username=username, notification_count=notification_count, **kw))
+			# get notification_count
+			notification_count = \
+				db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
+				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
+				
+			self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
+									notification_count=notification_count, **kw))
 		except:
-			self.write(self.render_str(template, notification_count=notification_count, **kw))
+			self.write(self.render_str(template, **kw))
+			
 	#Returns the id of the current user if logged in else None
 	def getUser(self):
 		userId = self.request.cookies.get('user')
@@ -35,14 +59,25 @@ class Handler(webapp2.RequestHandler):
 			userId = validation.check_secure_val(userId)
 			if userId:
 				userId = int(userId)
+				
+		# create channel is not already created
+		channel_token = self.session.get('channel_token')
+		if userId and channel_token is None: 
+			channel_token = channel.create_channel(str(userId))
+			self.session['channel_token'] = channel_token
+			print str(userId) + " created channel w/ token= " + channel_token
+			
 		return userId
+	
 	#Checks if user is logged in and redirects to login page if not
 	def checkLogin(self, validate=True):
 		userID = self.getUser()
 		if not userID:
 			self.redirect('login')
-		if validate and not User.get_by_id(userID).activated:
+			return
+		elif validate and not User.get_by_id(userID).activated:
 			self.redirect('verify')
+			
 	#Deletes past rides
 	def deleteOldRides(self):
 		rides = [ride for ride in Ride.all() if ride.startTime < datetime.datetime.now()]

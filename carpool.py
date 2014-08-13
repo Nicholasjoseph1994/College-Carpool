@@ -14,6 +14,12 @@ from RidePage import RidePage
 from oauthAuthentication import oauthAuthentication
 from AllRides import AllRides
 from Verify import Verify
+import constants
+
+config = {}
+config['webapp2_extras.sessions'] = {
+    'secret_key': constants.APP_SECRET
+}
 
 application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/home', Home),
@@ -27,5 +33,6 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/oauth-authorized', oauthAuthentication),
 										('/allrides', AllRides),
 										('/verify', Verify)
-										], debug = True)
+										], config=config,
+										debug = True)
 

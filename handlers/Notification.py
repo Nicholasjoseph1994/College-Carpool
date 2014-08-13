@@ -1,8 +1,7 @@
 from google.appengine.ext import db
 from Handler import Handler
 from database import *
-from google.appengine.api import mail
-from google.appengine.api import memcache
+from google.appengine.api import mail, memcache, channel
 import time
 import socket
 import logging
@@ -99,7 +98,10 @@ class Notification(Handler):
 					notification = DriverResponseNotification(rideId=rideId, driverId=self.getUser(), requesterId=requesterId, type="accepted-ride")
 					notification.put()
 					
-					time.sleep(.25)
+					#print "Sending response message to " + str(requesterId)
+					channel.send_message(str(requesterId), "{}");
+					
+					time.sleep(.5)
 					self.redirect("/notification")
 				else:
 					self.writePage(error='Please sign in with Venmo!.')
@@ -111,11 +113,14 @@ class Notification(Handler):
 				notification = DriverResponseNotification(rideId=rideId, driverId=self.getUser(), requesterId=requesterId, type="rejected-ride")
 				notification.put()
 				
-				time.sleep(.25)
+				#print "Sending response message to " + str(requesterId)
+				channel.send_message(str(requesterId), "{}");
+				
+				time.sleep(.5)
 				self.redirect("/notification")
 		elif removeResponse:
 			# remove
 			responseId = int(self.request.get("responseId"))
 			DriverResponseNotification.get_by_id(responseId).delete()
-			time.sleep(.25)
+			time.sleep(.5)
 			self.redirect("/notification")
