@@ -3,3 +3,6 @@
 .pydevproject
 constants.py
 constants_*.py
+constants_local.py
+constants_dev.py
+constants_prod.py
