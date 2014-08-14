@@ -2,8 +2,6 @@ from google.appengine.ext import db
 from Handler import Handler
 from database import *
 import time
-from google.appengine.api import memcache
-from constants import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET
 
 class Home(Handler):
 	def render_front(self, rides, requests):
@@ -13,14 +11,7 @@ class Home(Handler):
 		self.deleteOldRides()
 		time.sleep(.25)
 		self.checkLogin()
-		if memcache.get('venmo_token'):
-			data = {'name': memcache.get('venmo_username'),
-					'consumer_id': CONSUMER_ID,
-					'access_token': memcache.get('venmo_token'),
-					'signed_into_venmo': True}
-		else:
-			data = {'signed_into_venmo': False,
-					'consumer_id': CONSUMER_ID}
+		
 		#Rides
 		rides = list(Ride.all())
 		userId = self.getUser()
