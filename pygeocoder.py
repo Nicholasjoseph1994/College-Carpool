@@ -183,34 +183,37 @@ class Geocoder(object):
         :rtype: (dict or array)
 
         """
-        request = requests.Request(
-            'GET',
-            url=Geocoder.GEOCODE_QUERY_URL,
-            params=params,
-            headers={
-                'User-Agent': Geocoder.USER_AGENT
-            })
+        for i in range(5):
+			request = requests.Request(
+				'GET',
+				url=Geocoder.GEOCODE_QUERY_URL,
+				params=params,
+				headers={
+					'User-Agent': Geocoder.USER_AGENT
+				})
 
-        if self and self.client_id and self.private_key:
-            request = self.add_signature(request)
-        elif self and self.api_key:
-            request.params['key'] = self.api_key
+			if self and self.client_id and self.private_key:
+				request = self.add_signature(request)
+			elif self and self.api_key:
+				request.params['key'] = self.api_key
 
-        session = requests.Session()
+			session = requests.Session()
 
-        if self and self.proxy:
-            session.proxies = {'https': self.proxy}
+			if self and self.proxy:
+				session.proxies = {'https': self.proxy}
 
-        response = session.send(request.prepare())
-        session.close()
+			response = session.send(request.prepare())
+			session.close()
 
-        if response.status_code == 403:
-            raise GeocoderError("Forbidden, 403", response.url)
-        response_json = response.json()
+			if response.status_code == 403:
+				raise GeocoderError("Forbidden, 403", response.url)
+			response_json = response.json()
 
-        if response_json['status'] != GeocoderError.G_GEO_OK:
-            raise GeocoderError(response_json['status'], response.url)
-        return response_json['results']
+			if response_json['status'] != GeocoderError.G_GEO_OK:
+				if i == 4:
+					raise GeocoderError(response_json['status'], response.url)
+			else:
+				return response_json['results']
 
     def add_signature(self, request):
         """
