@@ -2,3 +2,4 @@
 .project
 .pydevproject
 constants.py
+constants_*.py

@@ -5,7 +5,7 @@ from google.appengine.api import mail, memcache, channel
 import time
 import logging
 from lib import requests
-
+	
 class Notification(Handler):
 	#Gathers requests and then displays them
 	def writePage(self, error=''):

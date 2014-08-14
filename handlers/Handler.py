@@ -6,9 +6,7 @@ from database import *
 from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
-from lib import requests
 import constants
-from constants import CLIENT_ID
 
 #Lines for using HTML templates
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
@@ -54,11 +52,11 @@ class Handler(webapp2.RequestHandler):
 				venmo_username = memcache.get('venmo_username')
 				
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
-									notification_count=notification_count, CLIENT_ID=CLIENT_ID, 
+									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
 									venmo_username=venmo_username, **kw))
 			else:
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
-									notification_count=notification_count, CLIENT_ID=CLIENT_ID, **kw))
+									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
 		except:
 			self.write(self.render_str(template, **kw))
 			

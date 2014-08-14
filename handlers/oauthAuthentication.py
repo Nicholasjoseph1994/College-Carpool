@@ -1,7 +1,7 @@
 from google.appengine.api import memcache
 from Handler import Handler
-import constants
 from lib import requests
+import os, constants
 
 class oauthAuthentication(Handler):
 	def get(self):
