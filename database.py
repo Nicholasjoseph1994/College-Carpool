@@ -7,7 +7,7 @@ class Ride(db.Model):
 	driverId = db.IntegerProperty(required=True)
 	passengerMax = db.IntegerProperty(required=True)
 	cost = db.FloatProperty(required=True)
-	driveTime = db.IntegerProperty(required=True)
+	driveTime = db.FloatProperty(required=True)
 	driveDistance = db.FloatProperty(required=True)
 	passIds = db.StringProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
