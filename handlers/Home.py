@@ -11,7 +11,7 @@ class Home(Handler):
 		self.deleteOldRides()
 		time.sleep(.25)
 		self.checkLogin()
-		
+
 		#Rides
 		rides = list(Ride.all())
 		userId = self.getUser()
