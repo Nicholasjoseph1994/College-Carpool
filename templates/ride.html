@@ -69,7 +69,7 @@ function calcRoute() {
 	  <style>
 		  .map {width: 500px; height: 300px};
 	  </style>
-    <td>
+	<td>
       <table class="table" style="background: rgba(0, 0, 255, 0.3); border-radius: 1em;">
 	<tr>
 	  <td><div class="flex-item">From: {{ride.start}}</div></td>
@@ -81,6 +81,16 @@ function calcRoute() {
 	  <td><div class="flex-item">Cost: $<script>document.write(new Number({{ride.cost}}).toFixed(2));</script><div></td>
 	  <td><div class="flex-item">Start Time: {{ride.startTime}}</div></td>
     </tr>
+	<tr>
+	  <td><div class="flex-item">Trip Distance: {{ride.driveDistance}} miles</div></td>
+	  <td>
+	    <div class="flex-item">
+			Trip Duration: 
+			{{(ride.driveTime/3600)|round(0, 'floor')}} hour(s), 
+			{{((ride.driveTime/60) % 60)|round(0)}} minute(s)
+	    </div></td>
+	</tr>
+	
 	<tr>
 		<form method="post"> 
 			<input type="hidden" name="driverId" value={{ride.driverId}} />

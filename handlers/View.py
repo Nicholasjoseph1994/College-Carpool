@@ -5,10 +5,16 @@ from database import User
 
 class View(Handler):
 	def get(self):
+		#Initialization
 		self.deleteOldRides()
 		self.checkLogin()
+
+		#Finding the rides user is not in
 		rides = list(db.GqlQuery("SELECT * FROM Ride ORDER BY startTime DESC", userId=self.getUser()))
-		rides = filter(lambda x: x.driverId!=self.getUser() and str(self.getUser()) not in x.passIds, rides)
+		notInRide = lambda x: x.driverId!=self.getUser() and str(self.getUser()) not in x.passIds
+		rides = filter(notInRide, rides)
+
+		#Finds the requests the user has made
 		requests = list(db.GqlQuery("SELECT * FROM Request WHERE requesterId = :userId", userId=self.getUser()))
 		requests = [x.rideId for x in requests]
 		rides = [x for x in rides if x.key().id() not in requests]
