@@ -43,7 +43,7 @@ class Signup(Handler):
 		if username and password and verify and email:
 			passHash = validation.make_pw_hash(username, password)
 			code = validation.make_salt()
-			
+
 			user= User(username = username, passHash = passHash, email = email, bio=bio, activationCode=code)
 			u = User.all().filter('username =', username).get()
 			if u:
@@ -57,4 +57,4 @@ class Signup(Handler):
 			self.redirect("/home")
 		else:
 			self.write_form(userError, passError, verifyError, emailError, user_username, user_email, bio=bio)
-	
+

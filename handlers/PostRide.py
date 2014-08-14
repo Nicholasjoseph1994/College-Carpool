@@ -90,14 +90,10 @@ class PostRide(Handler):
 			startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
 
 			#Get distance and time infomration
-			orig_coord = start.coordinates
-			dest_coord = destination.coordinates
-			url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&mode=driving&language=en-EN&sensor=false".format(str(orig_coord),str(dest_coord))
-			rideStats= json.load(urllib.urlopen(url))
-			rideDuration = rideStats['rows'][0]['elements'][0]['duration']['value']
-			rideDistanceMeters = rideStats['rows'][0]['elements'][0]['distance']['value']
-			rideDistance = (rideDistanceMeters * 0.000621371)
-			rideDistance -= rideDistance % .1 #truncates to 1 digit
+			locationInfo = self.getLocationInfo(start, destination)
+			rideDuration = locationInfo['duration']['value']
+			rideDistance = locationInfo['distance']['value']
+
 			#Check that the ride is in the present
 			if startTime < datetime.datetime.now():
 				error = "You can't create past rides"
@@ -111,7 +107,7 @@ class PostRide(Handler):
 						passengerMax=passengerMax,
 						driverId=driverId,
 						passIds='',
-						driveTime=float(rideDuration),
+						driveTime=int(rideDuration),
 						driveDistance=float(rideDistance))
 				ride.put()
 

@@ -6,6 +6,9 @@ from database import *
 from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
+from lib import requests
+import urllib
+import json
 import constants
 
 #Lines for using HTML templates
@@ -29,16 +32,16 @@ class Handler(webapp2.RequestHandler):
 		# Returns a session using the default cookie key.
 		return self.session_store.get_session(name='mc_session',
 			factory=sessions_memcache.MemcacheSessionFactory)
-	
+
 	#Writes to the page
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
-		
+
 	#Returns as a string the html of the page
 	def render_str(self, template, **params):
 		t = jinja_env.get_template(template)
 		return t.render(params)
-	
+
 	#Renders the page
 	def render(self, template, **kw):
 		try:
@@ -47,7 +50,6 @@ class Handler(webapp2.RequestHandler):
 			notification_count = \
 				db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
 				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
-			
 			if memcache.get('signed_into_venmo') == True:
 				venmo_username = memcache.get('venmo_username')
 				
@@ -59,7 +61,7 @@ class Handler(webapp2.RequestHandler):
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
 		except:
 			self.write(self.render_str(template, **kw))
-			
+
 	#Returns the id of the current user if logged in else None
 	def getUser(self):
 		userId = self.request.cookies.get('user')
@@ -67,17 +69,17 @@ class Handler(webapp2.RequestHandler):
 			userId = validation.check_secure_val(userId)
 			if userId:
 				userId = int(userId)
-				
+
 		# create channel is not already created
 		channel_token = self.session.get('channel_token')
-		if userId and channel_token is None: 
+		if userId and channel_token is None:
 			channel_token = channel.create_channel(str(userId))
 			#self.response.set_cookie('channel_token', channel_token)
 			self.session['channel_token'] = channel_token
 			print str(userId) + " created channel w/ token= " + channel_token
-			
+
 		return userId
-	
+
 	#Checks if user is logged in and redirects to login page if not
 	def checkLogin(self, validate=True):
 		userID = self.getUser()
@@ -86,7 +88,7 @@ class Handler(webapp2.RequestHandler):
 			return
 		elif validate and not User.get_by_id(userID).activated:
 			self.redirect('verify')
-			
+
 	#Deletes past rides
 	def deleteOldRides(self):
 		rides = [ride for ride in Ride.all() if ride.startTime < datetime.datetime.now()]
@@ -95,7 +97,7 @@ class Handler(webapp2.RequestHandler):
 				if request.rideId == ride.key().id():
 					request.delete()
 			ride.delete()
-	
+
 	def sendActivationEmail(self, email, code):
 		message = mail.EmailMessage()
 		message.sender = "notifications@college-carpool.appspotmail.com"
@@ -105,6 +107,17 @@ class Handler(webapp2.RequestHandler):
 			% (self.getVerifyURL(code))
 		print message.body
 		message.Send()
-		
+
 	def getVerifyURL(self, code):
 		return "http://%s/%s?code=%s" % (self.request.host, 'verify', code)
+
+	def getLocationInfo(self, locA, locB):
+		orig_coord = locA.coordinates
+		dest_coord = locB.coordinates
+		url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinatio    ns={1}&mode=driving&language=en-EN&sensor=false'.format(str(orig_coord),str(dest_coord))
+		rideStats = json.load(urllib.urlopen(url))
+		rideDistanceMeters = rideStats['rows'][0]['elements'][0]['distance']['value']
+		rideDistance = (rideDistanceMeters * 0.00621371)
+		rideDistance -= rideDistance % 0.1 #truncates to last digit
+		rideStats['rows'][0]['elements'][0]['distance']['value'] = rideDistance
+		return rideStats['rows'][0]['elements'][0]
