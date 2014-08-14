@@ -4,7 +4,7 @@ from database import *
 from google.appengine.api import mail, memcache, channel
 import time
 import logging
-import requests
+from lib import requests
 
 class Notification(Handler):
 	#Gathers requests and then displays them

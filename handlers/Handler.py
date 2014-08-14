@@ -6,7 +6,8 @@ from database import *
 from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
-import requests, constants
+from lib import requests
+import constants
 from constants import CLIENT_ID
 
 #Lines for using HTML templates

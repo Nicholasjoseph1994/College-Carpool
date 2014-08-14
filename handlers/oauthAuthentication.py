@@ -1,7 +1,7 @@
 from google.appengine.api import memcache
 from Handler import Handler
 import constants
-import requests
+from lib import requests
 
 class oauthAuthentication(Handler):
 	def get(self):
@@ -27,4 +27,4 @@ class oauthAuthentication(Handler):
 		nextURL = self.request.get('next')
 		return self.redirect(nextURL if nextURL else '/home')
 	def post(self):
-		print "oops"
+		pass
