@@ -3,9 +3,12 @@ import os
 import jinja2
 import validation
 from database import *
-from google.appengine.api import mail, channel
+from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
+from lib import requests
+import constants
+from constants import CLIENT_ID
 
 #Lines for using HTML templates
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
@@ -46,9 +49,16 @@ class Handler(webapp2.RequestHandler):
 			notification_count = \
 				db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
 				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
+			
+			if memcache.get('signed_into_venmo') == True:
+				venmo_username = memcache.get('venmo_username')
 				
-			self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
-									notification_count=notification_count, **kw))
+				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
+									notification_count=notification_count, CLIENT_ID=CLIENT_ID, 
+									venmo_username=venmo_username, **kw))
+			else:
+				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
+									notification_count=notification_count, CLIENT_ID=CLIENT_ID, **kw))
 		except:
 			self.write(self.render_str(template, **kw))
 			

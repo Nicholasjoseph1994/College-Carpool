@@ -2,6 +2,7 @@ import sys
 import webapp2
 
 sys.path.append('handlers')
+sys.path.append('lib')
 from MainPage import MainPage
 from Home import Home
 from Signup import Signup
@@ -14,6 +15,7 @@ from RidePage import RidePage
 from oauthAuthentication import oauthAuthentication
 from AllRides import AllRides
 from Verify import Verify
+from VenmoLogOut import VenmoLogOut
 import constants
 
 config = {}
@@ -32,7 +34,8 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/(\d+)', RidePage),
 										('/oauth-authorized', oauthAuthentication),
 										('/allrides', AllRides),
-										('/verify', Verify)
+										('/verify', Verify),
+                                        ('/venmo-logout', VenmoLogOut)
 										], config=config,
 										debug = True)
 

@@ -28,7 +28,12 @@
 						</svg>
 					</a>
 				</li>
-				<li><a href="https://api.venmo.com/oauth/authorize?client_id=1562&scope=make_payments,access_profile&response_type=code">Connect Venmo</a></li> 
+				<li>
+				{% if venmo_username %}
+				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo ({{ venmo_username }})</a>
+				{% else %}
+				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance&response_type=code">Connect Venmo</a></li> 
+				{% endif %}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 		<!---		<li><a href="signup">Sign Up</a></li>
@@ -39,6 +44,10 @@
 		</nav>
 		
 		<script>
+			var nextURL = '?next=' + window.location.pathname;
+			$("#venmologout").attr("href", '/venmo-logout' + nextURL);
+			$("#venmologin").attr("href", $("#venmologin").attr("href") + "&redirect_uri=" + window.location.origin + "/oauth-authorized" + nextURL);
+			
 			var state = { 
 				username: '{{ username }}',
 				token: '{{ token }}',
