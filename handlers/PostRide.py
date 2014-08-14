@@ -4,6 +4,7 @@ from database import *
 import datetime
 import time
 import re
+from pygeocoder import Geocoder
 
 class PostRide(Handler):
 	#Renders the form
@@ -25,8 +26,14 @@ class PostRide(Handler):
 			if not start:
 				error = "Please enter a starting location."
 				res =  False
+			if not start.valid_address:
+				error = "We could not find your start location. Please check that you spelled it correctly."
+				res = False
 			if not destination:
 				error = "Please enter a destination."
+				res = False
+			if not destination.valid_address:
+				error = "We could not find your destination. Please check that you spelled it correctly."
 				res = False
 			if not cost or cost < 0:
 				error = "Please enter a non-negative cost."
@@ -50,8 +57,8 @@ class PostRide(Handler):
 				self.render_front(start, destination, dateInput, timeInput, cost, passengerMax, error)
 			return res
 
-		start = self.request.get("start")
-		destination = self.request.get("destination")
+		start = Geocoder.geocode(self.request.get("start"))
+		destination = Geocoder.geocode(self.request.get("destination"))
 		cost = self.request.get("cost")
 		# Makes sure that passengerMax has something in it that can be an int
 		try:
@@ -63,6 +70,7 @@ class PostRide(Handler):
 		driverId = self.getUser()
 
 		if validate_inputs(start, destination, cost, passengerMax, dateInput, timeInput):
+			#Procceses date/time input
 			date = map(int, dateInput.split("/", 2))
 			timeFull = timeInput.split(" ")
 			inputTime = map(int, timeFull[0].split(":"))
@@ -72,11 +80,24 @@ class PostRide(Handler):
 				inputTime[0] += 12
 
 			startTime = datetime.datetime(date[2],date[0],date[1],inputTime[0],inputTime[1],0)
+
+			#Get distance and time infomration
+			orig_coord = start.coordinates
+			dest_coord = destination.coordinates
+			url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&mode=driving&language=en-EN&sensor=false".format(str(orig_coord),str(dest_coord))
+			rideStats= json.load(urllib.urlopen(url))
+			rideDuration = rideStats['rows'][0]['elements'][0]['duration']['value']
+			rideDistance = rideStats['rows'][0]['elements'][0]['distance']['value']
+			#Check that the ride is in the present
 			if startTime < datetime.datetime.now():
 				error = "You can't create past rides"
 				self.render_front(start, destination, '', '', cost, passengerMax, error)
 			else:
-				ride = Ride(start=start, destination=destination, startTime=startTime, cost=float(cost), passengerMax=passengerMax, driverId=driverId, passIds="")
+				ride = Ride(start=start, destination=destination,
+						startTime=startTime, cost=float(cost),
+						passengerMax=passengerMax, driverId=driverId,
+						passIds='', driveTime=rideDuration,
+						driveDistance=rideDistance)
 				ride.put()
 
 				time.sleep(.25) #so that it has time to enter the ride and it appears on home page
