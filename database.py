@@ -15,7 +15,8 @@ class Ride(db.Model):
 class User(db.Model):
 	username = db.StringProperty(required=True)
 	passHash = db.TextProperty(required=True)
-	email = db.StringProperty(required=False)
+	email = db.StringProperty(required=True)
+	venmo_email = db.StringProperty(required=False)
 	bio = db.TextProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
 	activationCode = db.StringProperty()

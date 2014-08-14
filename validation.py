@@ -4,7 +4,8 @@ import string
 import random
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 PASS_RE = re.compile(r"^.{3,20}$")
-EMAIL_RE = re.compile(r"^[\S]+@[\S]*brown\.edu$")
+EMAIL_RE = re.compile(r"[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
+EDU_EMAIL_RE = re.compile(r"^[\S]+@[\S]*brown\.edu$")
 
 def username(username):
 	if USER_RE.match(username):
@@ -25,7 +26,13 @@ def verify(password, verify):
 		return None
 
 def email(email):
-	if EMAIL_RE.match(email) or email == "nicholasjoseph1994@gmail.com":
+	if EMAIL_RE.match(email):
+		return email
+	else:
+		return None
+
+def edu_email(email):
+	if EDU_EMAIL_RE.match(email) or email == "nicholasjoseph1994@gmail.com":
 		return email
 	else:
 		return None

@@ -32,7 +32,7 @@
 				{% if venmo_username %}
 				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo ({{ venmo_username }})</a>
 				{% else %}
-				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance&response_type=code">Connect Venmo</a></li> 
+				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance%20access_email&response_type=code">Connect Venmo</a></li> 
 				{% endif %}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">

@@ -63,7 +63,9 @@ class Notification(Handler):
 					ride.passIds = ','.join(passIds)
 					access_token = memcache.get('venmo_token')
 					note = "Spent this money on carpooling with college-carpool.appspot.com"
-					email = User.get_by_id(ride.driverId).email
+					
+					venmo_email = User.get_by_id(self.getUser()).venmo_email
+					email = venmo_email if venmo_email else User.get_by_id(ride.driverId).email
 					amount = ride.cost
 					payload = {
 							"access_token":access_token,
