@@ -2,7 +2,7 @@ from google.appengine.ext import db
 #Table for Rides 
 class Ride(db.Model):
 	start = db.StringProperty(required = True)
-	destination = db.TextProperty(required=True)
+	destination = db.StringProperty(required=True)
 	startTime = db.DateTimeProperty(auto_now_add=True)
 	driverId = db.IntegerProperty(required=True)
 	passengerMax = db.IntegerProperty(required=True)
