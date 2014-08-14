@@ -16,20 +16,26 @@ class Notification(Handler):
 		for passengerNot in list(db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser())):
 			# request from passenger: (passenger-request)
 			# has a request associated with it
-			request = Request.get_by_id(passengerNot.requestId)
-			request.ride = Ride.get_by_id(request.rideId)
-			request.requester = User.get_by_id(request.requesterId)
-			requests.append(request)
+			try:
+				request = Request.get_by_id(passengerNot.requestId)
+				request.ride = Ride.get_by_id(request.rideId)
+				request.requester = User.get_by_id(request.requesterId)
+				requests.append(request)
+			except:
+				pass
 			
 		responses = []
 		for driverNot in list(db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser())):
 			# driver response: (accepted-ride | rejected-ride)
 			# has a ride associated with it
-			response = driverNot
-			ride = Ride.get_by_id(driverNot.rideId)
-			response.response = driverNot.type
-			response.ride = ride
-			responses.append(response)
+			try:
+				response = driverNot
+				ride = Ride.get_by_id(driverNot.rideId)
+				response.response = driverNot.type
+				response.ride = ride
+				responses.append(response)
+			except:
+				pass
 		
 		#requests = list(db.GqlQuery('SELECT * FROM Request WHERE driverId=:userId', userId=self.getUser()))
 		#for request in requests:

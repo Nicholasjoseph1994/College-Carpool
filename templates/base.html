@@ -72,12 +72,8 @@
 		  		var socket = channel.open(handler);
 			    socket.onopen = onOpened;
 			    socket.onmessage = onMessage;
-			    socket.onerror = function(e){
-	                alert("error:"+e['description']);
-	            };
-	            socket.onclose = function(){
-	                alert("close");
-	            };
+			    socket.onerror = function(e){};
+	            socket.onclose = function(){};
 		    }
 		</script>
 	{% block content %}
