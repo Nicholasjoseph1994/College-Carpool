@@ -10,7 +10,6 @@ from lib import requests
 import urllib
 import json
 import constants
-from constants import CLIENT_ID
 
 #Lines for using HTML templates
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
@@ -53,13 +52,13 @@ class Handler(webapp2.RequestHandler):
 				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
 			if memcache.get('signed_into_venmo') == True:
 				venmo_username = memcache.get('venmo_username')
-
-				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'),
-									notification_count=notification_count, CLIENT_ID=CLIENT_ID, 
+				
+				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
+									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
 									venmo_username=venmo_username, **kw))
 			else:
-				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'),
-									notification_count=notification_count, CLIENT_ID=CLIENT_ID, **kw))
+				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
+									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
 		except:
 			self.write(self.render_str(template, **kw))
 
