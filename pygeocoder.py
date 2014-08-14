@@ -16,7 +16,7 @@ Python wrapper for Google Geocoding API V3.
 
 """
 
-import requests
+from lib import requests
 import functools
 import base64
 import hmac
