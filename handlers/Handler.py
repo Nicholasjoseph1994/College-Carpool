@@ -7,6 +7,8 @@ from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
 from lib import requests
+import urllib
+import json
 import constants
 from constants import CLIENT_ID
 
@@ -114,6 +116,7 @@ class Handler(webapp2.RequestHandler):
 		orig_coord = locA.coordinates
 		dest_coord = locB.coordinates
 		url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinatio    ns={1}&mode=driving&language=en-EN&sensor=false'.format(str(orig_coord),str(dest_coord))
+		rideStats = json.load(urllib.urlopen(url))
 		rideDistanceMeters = rideStats['rows'][0]['elements'][0]['distance']['value']
 		rideDistance = (rideDistanceMeters * 0.00621371)
 		rideDistance -= rideDistance % 0.1 #truncates to last digit
