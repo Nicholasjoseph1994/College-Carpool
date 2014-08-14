@@ -3,11 +3,8 @@ from Handler import Handler
 from database import *
 from google.appengine.api import mail, memcache, channel
 import time
-import socket
 import logging
-import urllib
-import urllib2
-import cookielib
+import requests
 
 class Notification(Handler):
 	#Gathers requests and then displays them
@@ -77,19 +74,9 @@ class Notification(Handler):
 					print amount, access_token, email
 					logging.error(amount)
 					url = "https://api.venmo.com/v1/payments"
-					# setup socket connection timeout
-					timeout = 15
-					socket.setdefaulttimeout(timeout)
-					# setup cookie handler
-					cookie_jar = cookielib.LWPCookieJar()
-					cookie = urllib2.HTTPCookieProcessor(cookie_jar)
-					# create an urllib2 opener()
-					opener = urllib2.build_opener(cookie) # we are not going to use proxy now
-					# send payload
-					req = urllib2.Request(url, urllib.urlencode(payload))
-					# receive confirmation
-					res = opener.open(req)
-					#html = res.read()
+					response = requests.post(url, payload)
+					response_dict = response.json()
+
 					user_address = User.get_by_id(self.getUser()).email
 					sender_address = "notifications@college-carpool.appspotmail.com"
 					subject = "Have a safe upcoming drive!"

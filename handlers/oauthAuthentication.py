@@ -1,45 +1,30 @@
-from google.appengine.ext import db
 from google.appengine.api import memcache
 from Handler import Handler
-from database import *
-import json
-import urllib2
-import urllib
-import socket
-import cookielib
-
+import constants
+import requests
 
 class oauthAuthentication(Handler):
 	def get(self):
 		AUTHORIZATION_CODE = self.request.get('code')
 		data = {
-				"client_id":CONSUMER_ID,
-				"client_secret":CONSUMER_SECRET,
+				"client_id": constants.CLIENT_ID,
+				"client_secret": constants.CLIENT_SECRET,
 				"code":AUTHORIZATION_CODE
 		}
-		url = "https://api.venmo.com/v1/oauth/access_token"
-
-		# setup socket connection timeout
-		timeout = 15
-		socket.setdefaulttimeout(timeout)
-		# setup cookie handler
-		cookie_jar = cookielib.LWPCookieJar()
-		cookie = urllib2.HTTPCookieProcessor(cookie_jar)
-
-		# create an urllib2 opener()
-		opener = urllib2.build_opener(cookie) # we are not going to use proxy now
-
-		# create your HTTP request
-		req = urllib2.Request(url, urllib.urlencode(data))
-
-		# submit your request
-		res = opener.open(req)
-		html = res.read()
-		js = json.loads(html)
-		access_token = js.get('access_token')
-		user = js.get('user').get('username')
+		response = requests.post("https://api.venmo.com/v1/oauth/access_token", data)
+		response_dict = response.json()
+		print response_dict
+		access_token = response_dict.get('access_token')
+		user = response_dict.get('user').get('username')
+		balance = response_dict.get('balance')
+		
 		memcache.add('venmo_token', access_token)
 		memcache.add('venmo_username', user)
-		return self.redirect("home")
+		memcache.add('venmo_balance', balance)
+		memcache.add('signed_into_venmo', True)
+		memcache.add('AUTHORIZATION_CODE', AUTHORIZATION_CODE)
+		
+		nextURL = self.request.get('next')
+		return self.redirect(nextURL if nextURL else '/home')
 	def post(self):
-		pass
+		print "oops"
