@@ -107,7 +107,7 @@ class PostRide(Handler):
 						passengerMax=passengerMax,
 						driverId=driverId,
 						passIds='',
-						driveTime=int(rideDuration),
+						driveTime=float(rideDuration),
 						driveDistance=float(rideDistance))
 				ride.put()
 
