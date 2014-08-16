@@ -27,3 +27,15 @@ li {
 	border-radius: 1em;
 	text-align: center;
 }
+
+#search-dropdown {
+	position: fixed;
+	top: 80px;
+	right: 600px;
+}
+
+#search-fields {
+	position: fixed;
+	top: 55px;
+	right: 100px;
+	width: 450px;

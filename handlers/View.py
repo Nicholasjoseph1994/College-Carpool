@@ -1,7 +1,7 @@
-
 from google.appengine.ext import db
 from Handler import Handler
 from database import User
+from pygeocoder import Geocoder
 
 class View(Handler):
 	def get(self):
@@ -20,7 +20,26 @@ class View(Handler):
 		rides = [x for x in rides if x.key().id() not in requests]
 		for ride in rides:
 			ride.driverName = User.get_by_id(ride.driverId).username
-		rides = sorted(rides, key=lambda x:x.startTime)
+
+		sortType = self.request.get('sort', default_value='time')
+		if sortType == 'time':
+			rides = sorted(rides, key=lambda x:x.startTime)
+		elif sortType == 'cost':
+			rides = sorted(rides, key=lambda x:x.cost)
+		elif sortType == 'start':
+			startLocation = Geocoder.geocode(self.request.get('start'))
+			rides = sorted(rides,
+					key=lambda x:self.getLocationInfo(startLocation, Geocoder.geocode(x.start))['distance']['value'])
+		elif sortType == 'dest':
+			destLocation = Geocoder.geocode(self.request.get('dest'))
+			rides = sorted(rides,
+					key=lambda x: self.getLocationInfo(Geocoder.geocode(x), destLocation)['distance']['value'])
+		elif sortType == 'start_and_dest':
+			startLocation = Geocoder.geocode(self.request.get('start'))
+			destLocation = Geocoder.geocode(self.request.get('dest'))
+			rides = sorted(rides,
+					key=lambda x: self.getLocationInfo(startLocation, Geocoder.geocode(x.start))['distance']['value'] +
+					getLocationInfo(Geocoder.geocode(x), destLocation)['distance']['value'])
 		self.render("rideSearch.html", rides=rides)
 	def post(self):
 		self.redirect('/'+self.request.get('rideId'))

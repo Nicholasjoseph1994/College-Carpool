@@ -1,13 +1,75 @@
 {% extends "base.html"%}
 
 {% block content %}
-		
+
+<script>
+	$(document).ready(function(){
+		//hides text fields initially
+		$('#start').hide();
+		$('#dest').hide();
+
+		//hides and shows text field based on search option
+		$('#searchOptions').on('change', function(){
+			if (this.value == 'start')
+			{
+				$('#start').show();
+				$('#dest').hide();
+			}
+			else if (this.value == 'dest')
+			{
+				$('#start').hide();
+				$('#dest').show();
+			}
+			else if (this.value == 'start_and_dest')
+			{
+				$('#start').show();
+				$('#dest').show();
+			}
+			else
+			{
+				$('#start').hide();
+				$('#dest').hide();
+			}
+		});
+	});
+</script>
+
 <table>
 	<col width="90%"/>
 	<tr>
     	<td>
-      	<h2>Search Rides</h2>
+      	 	<h2>Search Rides</h2>
+			<br>
+			<br>
     	</td>
+		<td>
+			<!-- Single button -->
+			<div id="search-dropdown" position=fixed;>
+				<select class="btn btn-info dropdown-toggle" id="searchOptions" style="height:40px;width:168px;">
+					<option value="time">Time</option>
+					<option value="cost">Cost</option>
+					<option value="start">Start</option>
+					<option value="dest">Destination</option>
+					<option value="start_and_dest">Start And Destination</option>
+				</select>
+			</div>
+		</td>
+		<td>
+			<div id="search-fields">
+				<form class="form-horizontal" role="form">
+					<div class="form-group" id='start'>
+						<label for="start">Starting location:</label>
+						<input width = 2000px type="text" class="form-control" id="start" placeholder="Where are you starting?">
+					</div>
+					<div class="form-group" id='dest'>
+						<label for="destination">Destination:</label>
+						<input type="text" class="form-control" id="destination" placeholder="Where are you going?">
+					</div>
+				</form>	
+			</div>
+		</td>
+
+
   </tr>
 </table>
 
