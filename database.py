@@ -7,7 +7,7 @@ class Ride(db.Model):
 	driverId = db.IntegerProperty(required=True)
 	passengerMax = db.IntegerProperty(required=True)
 	cost = db.FloatProperty(required=True)
-	driveTime = db.FloatProperty(required=True)
+	driveTime = db.IntegerProperty(required=True)
 	driveDistance = db.FloatProperty(required=True)
 	passIds = db.StringProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
@@ -49,3 +49,15 @@ class DriverResponseNotification(db.Model):
 	rideId = db.IntegerProperty(required=True)
 	requesterId = db.IntegerProperty(required=True)
 	type = db.StringProperty(required=True, choices=set(["accepted-ride","rejected-ride"]))
+
+# Table for payment statuses
+class Payment(db.Model):
+	type = db.StringProperty(required=True, choices=set(["Venmo"]))
+	dateCreated = db.DateTimeProperty(required=True)
+	status = db.StringProperty(required=True)
+	payerID = db.IntegerProperty(required=True) # api ID (i.e. venmo ID)
+	receiverID = db.IntegerProperty(required=True) # api ID (i.e. venmo ID)
+	apiID = db.StringProperty(required=True)
+	amount = db.FloatProperty(required=True)
+	note = db.StringProperty()
+	lastUpdate = db.DateTimeProperty()

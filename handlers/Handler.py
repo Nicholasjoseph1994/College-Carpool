@@ -52,14 +52,17 @@ class Handler(webapp2.RequestHandler):
 				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
 			if memcache.get('signed_into_venmo') == True:
 				venmo_username = memcache.get('venmo_username')
-				
+				response = requests.get("https://api.venmo.com/v1/me?access_token=" + memcache.get('venmo_token'))
+				balance = response.json().get('data').get('balance')
+
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
-									venmo_username=venmo_username, **kw))
+									balance = balance, venmo_username=venmo_username, **kw))
 			else:
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
-		except:
+		except Exception as e:
+			print str(e)
 			self.write(self.render_str(template, **kw))
 
 	#Returns the id of the current user if logged in else None
