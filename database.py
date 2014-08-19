@@ -31,6 +31,7 @@ class User(db.Model):
 	created = db.DateTimeProperty(auto_now_add=True)
 	activationCode = db.StringProperty()
 	activated = db.BooleanProperty(default=False)
+	recoveryCode = db.StringProperty()
 	
 #Table for requests
 class Request(db.Model):

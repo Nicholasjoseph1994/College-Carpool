@@ -24,6 +24,10 @@ handlers:
   script: carpool.application
   secure: always
 
+- url: /recover
+  script: carpool.application
+  secure: always
+
 - url: /.*
   script: carpool.application
 

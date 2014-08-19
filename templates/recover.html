@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>College Carpool</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/static/css/base.css" rel="stylesheet">
+		<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="_ah/channel/jsapi"></script>
+	</head>
+
+	<body>
+	
+{% block content %}
+<script type="text/javascript" src="static/js/recover.js"></script>
+
+{% if recover and userID %}
+<div id="changePassword" align="center">
+	<div align="center">
+		<label>Password Recovery</label>
+	</div>
+	
+	<form class="form-horizontal" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">New Password:</label>
+			<input class="col-sm-4" type="password" placeholder="New Password" name="newPassword">
+		</div>
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Verify New Password:</label>
+			<input class="col-sm-4" type="password" placeholder="Verify New Password" name="verifyNewPassword">
+		</div>
+		<input type="hidden" name="userID" value="{{ userID }}"></input>
+		<button type="submit" class="btn btn-primary" name="resetPassword">Reset Password</button>
+	</form>
+</div>
+
+{% elif not recover %}
+
+<div id="forgotPrompt" align="center" style="margin-bottom: 10px;">What did you forget? 
+	<button id="recoverUsernameBtn" class="btn btn-default swap-change">My Username</button>
+	<button id="recoverPasswordBtn" class="btn btn-default swap-change">My Password</button>
+</div>
+
+<div id="recoverUsername" class="hidden" align="center">
+	<form class="form-horizontal" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Email:</label>
+			<input class="col-sm-4" type="email" placeholder="Email Address (@brown.edu)" name="email">
+		</div>
+		
+		<button type="submit" class="btn btn-primary" name="recoverUsername">Send Username</button>
+	</form>
+</div>
+
+<div id="recoverPassword" class="hidden" align="center">
+	<form class="form-horizontal" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Username:</label>
+			<input class="col-sm-4" type="text" placeholder="Username" name="username">
+		</div>
+		OR
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Email:</label>
+			<input class="col-sm-4" type="email" placeholder="Email Address (@brown.edu)" name="email">
+		</div>
+		
+		<button type="submit" class="btn btn-primary" name="recoverPassword">Send Recovery Link</button>
+	</form>
+</div>
+{% endif %}
+
+<div align="center" style="margin-top: 10px; color:{{ color }};">{{ status }}</div>
+<div align="center">	
+	<button class = "btn btn-primary" align="center" onclick="location.href='/login'">
+  		Back to Login Page
+	</button>
+</div>
+
+</body>
+</html>
+
+{% endblock %}
