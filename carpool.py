@@ -17,6 +17,7 @@ from AllRides import AllRides
 from Verify import Verify
 from VenmoLogOut import VenmoLogOut
 from VenmoWebhook import VenmoWebhook
+from AdminPage import AdminPage
 import constants
 
 config = {}
@@ -37,7 +38,8 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/allrides', AllRides),
 										('/verify', Verify),
                                         ('/venmo-logout', VenmoLogOut),
-                                        ('/venmo-webhook', VenmoWebhook)
+                                        ('/venmo-webhook', VenmoWebhook),
+                                        ('/admin', AdminPage)
 										], config=config,
 										debug = True)
 
