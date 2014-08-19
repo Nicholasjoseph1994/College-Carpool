@@ -9,6 +9,7 @@ from lib import requests
 class Notification(Handler):
 	#Gathers requests and then displays them
 	def writePage(self, error=''):
+		# retrieve any requests from other users
 		requests = []
 		for passengerNot in list(db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser())):
 			# request from passenger: (passenger-request)
@@ -21,6 +22,7 @@ class Notification(Handler):
 			except:
 				pass
 			
+		# retrieve any response notifictaions from other users
 		responses = []
 		for driverNot in list(db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser())):
 			# driver response: (accepted-ride | rejected-ride)
@@ -33,6 +35,8 @@ class Notification(Handler):
 				responses.append(response)
 			except:
 				pass
+		
+		# retrieve pending payments
 		
 		#requests = list(db.GqlQuery('SELECT * FROM Request WHERE driverId=:userId', userId=self.getUser()))
 		#for request in requests:
@@ -55,14 +59,15 @@ class Notification(Handler):
 			if accepted == 'true':
 				if memcache.get('venmo_token'):
 					ride = Ride.get_by_id(rideId)
-					if ride.passIds:
-						passIds = ride.passIds.split(',')
-					else:
-						passIds = []
-					passIds.append(str(requesterId))
-					ride.passIds = ','.join(passIds)
+					ride.addPassenger(requesterId)
+# 					if ride.passIds:
+# 						passIds = ride.passIds.split(',')
+# 					else:
+# 						passIds = []
+# 					passIds.append(str(requesterId))
+# 					ride.passIds = ','.join(passIds)
 					access_token = memcache.get('venmo_token')
-					note = "Spent this money on carpooling with college-carpool.appspot.com"
+					note = "Spent this money on carpooling with college-carpool.appspot.com (Ride #%s)" % (ride.key().id())
 					
 					venmo_email = User.get_by_id(self.getUser()).venmo_email
 					email = venmo_email if venmo_email else User.get_by_id(ride.driverId).email

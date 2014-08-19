@@ -15,7 +15,9 @@ class oauthAuthentication(Handler):
 		response = requests.post("https://api.venmo.com/v1/oauth/access_token", data)
 		response_dict = response.json()
 		
+		# update user venmo info like email and venmoID
 		db_user = User.get_by_id(self.getUser())
+		db_user.venmoID = int(response_dict.get('user').get('id'))
 		db_user.venmo_email = response_dict.get('user').get('email')
 		db_user.put()
 		
@@ -27,7 +29,6 @@ class oauthAuthentication(Handler):
 		memcache.add('venmo_username', user)
 		memcache.add('venmo_balance', balance)
 		memcache.add('signed_into_venmo', True)
-		memcache.add('AUTHORIZATION_CODE', AUTHORIZATION_CODE)
 		
 		nextURL = self.request.get('next')
 		return self.redirect(nextURL if nextURL else '/home')

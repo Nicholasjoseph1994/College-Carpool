@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+
 #Table for Rides 
 class Ride(db.Model):
 	start = db.StringProperty(required = True)
@@ -7,20 +8,30 @@ class Ride(db.Model):
 	driverId = db.IntegerProperty(required=True)
 	passengerMax = db.IntegerProperty(required=True)
 	cost = db.FloatProperty(required=True)
-	driveTime = db.IntegerProperty(required=True)
+	driveTime = db.FloatProperty(required=True)
 	driveDistance = db.FloatProperty(required=True)
 	passIds = db.StringProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
+	
+	def addPassenger(self, passID):
+		passIds = []
+		if self.passIds:
+			passIds = self.passIds.split(',')
+		passIds.append(str(passID))
+		self.passIds = ','.join(passIds)
+	
 #Table for Users
 class User(db.Model):
 	username = db.StringProperty(required=True)
 	passHash = db.TextProperty(required=True)
 	email = db.StringProperty(required=True)
 	venmo_email = db.StringProperty(required=False)
+	venmoID = db.IntegerProperty(required=False)
 	bio = db.TextProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
 	activationCode = db.StringProperty()
 	activated = db.BooleanProperty(default=False)
+	
 #Table for requests
 class Request(db.Model):
 	driverId = db.IntegerProperty(required=True)

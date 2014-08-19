@@ -50,8 +50,10 @@ class Handler(webapp2.RequestHandler):
 			notification_count = \
 				db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
 				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
-			if memcache.get('signed_into_venmo') == True:
+			if memcache.get('signed_into_venmo'):
 				venmo_username = memcache.get('venmo_username')
+				
+				# expensive, may reconsider including this
 				response = requests.get("https://api.venmo.com/v1/me?access_token=" + memcache.get('venmo_token'))
 				balance = response.json().get('data').get('balance')
 
