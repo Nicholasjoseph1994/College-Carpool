@@ -30,7 +30,7 @@
 				</li>
 				<li>
 				{% if venmo_username %}
-				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo (${{ balance }})</a>
+				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo</a>
 				{% else %}
 				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance%20access_email&response_type=code">Connect Venmo</a></li> 
 				{% endif %}
@@ -51,6 +51,7 @@
 			var state = { 
 				username: '{{ username }}',
 				token: '{{ token }}',
+				venmo_token: '{{ venmo_token }}',
 				notification_count: parseInt('{{ notification_count }}')
 			};
 						    
@@ -83,6 +84,18 @@
 			    socket.onmessage = onMessage;
 			    socket.onerror = function(e){};
 	            socket.onclose = function(){};
+		    }
+
+		    if (state.venmo_token) {
+		    	// send AJAX request
+		    	//$("#venmologout").load("/update-venmo?access_token="+state.venmo_token);
+		    	$.get("/update-venmo", { access_token: state.venmo_token }, 
+					 function (resp) {
+					 	js = JSON.parse(resp);
+					  	balance = js.balance;
+					  	$("#venmologout").html($("#venmologout").html() + " ($" + balance + ")");
+					 }
+				);
 		    }
 		</script>
 	{% block content %}

@@ -19,6 +19,7 @@ from VenmoLogOut import VenmoLogOut
 from VenmoWebhook import VenmoWebhook
 from AdminPage import AdminPage
 from PasswordRecovery import PasswordRecovery
+from UpdateVenmo import UpdateVenmo
 import constants
 
 config = {}
@@ -41,7 +42,8 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
                                         ('/venmo-logout', VenmoLogOut),
                                         ('/venmo-webhook', VenmoWebhook),
                                         ('/admin', AdminPage),
-                                        ('/recover', PasswordRecovery)
+                                        ('/recover', PasswordRecovery),
+                                        ('/update-venmo', UpdateVenmo)
 										], config=config,
 										debug = True)
 

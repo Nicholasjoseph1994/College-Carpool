@@ -54,12 +54,13 @@ class Handler(webapp2.RequestHandler):
 				venmo_username = memcache.get('venmo_username')
 				
 				# expensive, may reconsider including this
-				response = requests.get("https://api.venmo.com/v1/me?access_token=" + memcache.get('venmo_token'))
-				balance = response.json().get('data').get('balance')
+# 				response = requests.get("https://api.venmo.com/v1/me?access_token=" + memcache.get('venmo_token'))
+# 				balance = response.json().get('data').get('balance')
+				venmo_token = memcache.get('venmo_token')
 
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
-									balance = balance, venmo_username=venmo_username, **kw))
+									venmo_username=venmo_username, venmo_token = venmo_token, **kw))
 			else:
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
