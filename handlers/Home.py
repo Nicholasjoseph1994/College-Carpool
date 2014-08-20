@@ -19,12 +19,9 @@ class Home(Handler):
 		#note: sort this later
 		for ride in rides:
 			driver = ride.driver
-			driverName = driver.username
-			driverEmail = driver.email
-			ride.driverName = driverName
-			ride.driverEmail = driverEmail
-			if ride.passIds:
-				ride.passengers = map(User.get_by_id,map(int,ride.passIds.split(",")))
+			ride.driverName = driver.username
+			ride.driverEmail = driver.email
+			ride.passengers = ride.getPassengers()
 				
 		#Requests
 		requests = list(user.requests_passenger.run())

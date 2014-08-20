@@ -18,6 +18,10 @@ class User(db.Model):
 	def addRide(self, ride):
 		self.rideIds.append(ride.key().id())
 		
+	def removeRide(self, ride):
+		rideID = ride.key().id()
+		self.rideIds = [r for r in self.rideIds if r != rideID]
+		
 	def getRides(self):
 		return [Ride.get_by_id(ride) for ride in self.rideIds]
 
@@ -35,10 +39,14 @@ class Ride(db.Model):
 	
 	passIds = db.ListProperty(int)
 	
-	def addRide(self, passenger):
+	def addPassenger(self, passenger):
 		self.passIds.append(passenger.key().id())
-		
-	def getRides(self):
+	
+	def removePassenger(self, passenger):
+		passID = passenger.key().id()
+		self.passIds = [p for p in self.passIds if p != passID]
+	
+	def getPassengers(self):
 		return [User.get_by_id(passenger) for passenger in self.passIds]
 
 #Table for requests

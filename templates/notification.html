@@ -31,25 +31,13 @@
 		
 		<h2>Responses</h2>
 		{% for response in responses %}
-			{% if response.response == "accepted-ride" %}
+			{% if response.type == "accepted-ride" %}
 			{% set panelType = "success" %}
 			{% set status = "Accepted!" %}
-				<div class = "panel panel-{{panelType}}">
-					<div class="panel-heading">
-						<h3 class="panel-title">Start: {{response.ride.start}}</br>
-						 Destination: {{response.ride.destination}}</h3>
-						 <h3>{{status}}</h3>
-						 </br>Start Time: {{response.ride.startTime}}</b></div>
-						 <form method="post">
-							<input type="hidden" name="responseId" value={{response.key().id()}} />
-							
-							<button type="submit" class="btn btn-danger" name="removeResponse" value="true">Remove</button>
-						 </form>
-					</div>
-				</div>
 			{% elif response.response == "rejected-ride" %}
 			{% set panelType = "danger" %}
 			{% set status = "Rejected" %}
+			{% endif %}
 				<div class = "panel panel-{{panelType}}">
 					<div class="panel-heading">
 						<h3 class="panel-title">Start: {{response.ride.start}}</br>
@@ -63,7 +51,6 @@
 						 </form>
 					</div>
 				</div>
-			{% endif %}
 			<hr>
 		{% endfor %}
 		<script src="/static/js/bootstrap.min.js"></script>

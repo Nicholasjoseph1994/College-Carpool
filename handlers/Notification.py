@@ -14,8 +14,7 @@ class Notification(Handler):
 		requests = user.passenger_requests
 
 		# retrieve any response notifictaions from other users
-		responses = user.driver_responses
-		
+		responses = list(user.driver_responses)
 		# retrieve pending payments
 		
 		self.render('notification.html', requests=requests, responses=responses, error=error)

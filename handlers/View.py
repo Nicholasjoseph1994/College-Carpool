@@ -19,11 +19,12 @@ class View(Handler):
 
 		#Finds the requests the user has made
 		requests = user.requests_passenger
-		requests = [x.ride for x in requests]
-		rides = filter(lambda x: x not in requests, rides)
+		requests = [x.ride.key().id() for x in requests]
+		rides = filter(lambda x: x.key().id() not in requests, rides)
 		
 		for ride in rides:
 			ride.driverName = ride.driver.username
+			ride.seatsLeft = ride.passengerMax - len(ride.passIds)
 			
 		rides = sorted(rides, key=lambda x:x.startTime)
 		self.render("rideSearch.html", rides=rides)
