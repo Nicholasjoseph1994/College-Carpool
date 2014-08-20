@@ -6,7 +6,6 @@ from database import *
 from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
 import datetime
-from lib import requests
 import urllib
 import json
 import constants

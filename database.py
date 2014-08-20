@@ -86,8 +86,10 @@ class Payment(db.Model):
 	type = db.StringProperty(required=True, choices=set(["Venmo"]))
 	dateCreated = db.DateTimeProperty(required=True)
 	status = db.StringProperty(required=True)
-	payerID = db.IntegerProperty(required=True) # api ID (i.e. venmo ID)
-	receiverID = db.IntegerProperty(required=True) # api ID (i.e. venmo ID)
+	
+	driver = db.ReferenceProperty(User, required=True, collection_name="incoming_payments")
+	passenger = db.ReferenceProperty(User, required=True, collection_name="outgoing_payments")
+	
 	apiID = db.StringProperty(required=True)
 	amount = db.FloatProperty(required=True)
 	note = db.StringProperty()
