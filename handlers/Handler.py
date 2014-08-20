@@ -45,17 +45,14 @@ class Handler(webapp2.RequestHandler):
 	#Renders the page
 	def render(self, template, **kw):
 		try:
-			username = User.get_by_id(self.getUser()).username
+			user = User.get_by_id(self.getUser())
+			username = user.username
 			# get notification_count
-			notification_count = \
-				db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser()).count() + \
-				db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser()).count()
+			notification_count = user.passenger_requests.count() + user.driver_responses.count()
+
 			if memcache.get('signed_into_venmo'):
 				venmo_username = memcache.get('venmo_username')
 				
-				# expensive, may reconsider including this
-# 				response = requests.get("https://api.venmo.com/v1/me?access_token=" + memcache.get('venmo_token'))
-# 				balance = response.json().get('data').get('balance')
 				venmo_token = memcache.get('venmo_token')
 
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 

@@ -13,12 +13,10 @@ class Home(Handler):
 		self.checkLogin()
 
 		#Rides
-		#rides = list(Ride.all())
 		userId = self.getUser()
+		user = User.get_by_id(userId)
 		rides = User.get_by_id(userId).getRides()
 		#note: sort this later
-		#if len(rides)>0:
-		#	rides = filter(lambda x: x.driverId == userId or (x.passIds and str(userId) in x.passIds), rides)
 		for ride in rides:
 			driver = ride.driver
 			driverName = driver.username
@@ -27,13 +25,9 @@ class Home(Handler):
 			ride.driverEmail = driverEmail
 			if ride.passIds:
 				ride.passengers = map(User.get_by_id,map(int,ride.passIds.split(",")))
+				
 		#Requests
-		requests = list(db.GqlQuery('SELECT * FROM Request WHERE requesterId=:userId', userId = userId))
-		for request in requests:
-			ride = Ride.get_by_id(request.rideId)
-			ride.driverName = User.get_by_id(ride.driverId).username
-			ride.driverEmail = User.get_by_id(ride.driverId).email
-			request.ride = ride
+		requests = list(user.requests_passenger.run())
 		self.render_front(rides, requests)
 
 	#This is for if they are cancelling a ride

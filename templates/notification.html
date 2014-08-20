@@ -4,19 +4,21 @@
 		<h2>Pending Requests</h2>
 		<div style="color:red">{{error}}</div>
 		<hr>
-		{% for request in requests %}
+		{% for r in requests %}
+		{% set request = r.request %}
+		{% set ride = request.ride %}
 			<div class = "panel panel-warning">
 				<div class="panel-heading">
-					<h3 class="panel-title">Start: {{request.ride.start}}</br>
-					 Destination: {{request.ride.destination}}</h3>
+					<h3 class="panel-title">Start: {{ride.start}}</br>
+					 Destination: {{ride.destination}}</h3>
 				</div>
-				<div class="panel-body"><b>Passenger: {{request.requester.username}}
-				</br>Bio: {{request.requester.bio}}
+				<div class="panel-body"><b>Passenger: {{request.passenger.username}}
+				</br>Bio: {{request.passenger.bio}}
 				</br>Message: {{request.message}}</b></div>
 				<div class="btn-group">
 					<form method="post">
-						<input type="hidden" name="rideId" value={{request.rideId}} />
-						<input type="hidden" name="requesterId" value={{request.requesterId}} />
+						<input type="hidden" name="rideId" value={{ride.key().id()}} />
+						<input type="hidden" name="requesterId" value={{request.passenger.key().id()}} />
 						<input type="hidden" name="requestId" value={{request.key().id()}} />
 						
 						<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>

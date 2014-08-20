@@ -10,38 +10,14 @@ class Notification(Handler):
 	#Gathers requests and then displays them
 	def writePage(self, error=''):
 		# retrieve any requests from other users
-		requests = User.get_by_id(self.getUser()).requests_driver
-# 		for passengerNot in list(db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser())):
-# 			# request from passenger: (passenger-request)
-# 			# has a request associated with it
-# 			try:
-# 				request = Request.get_by_id(passengerNot.requestId)
-# 				request.ride = Ride.get_by_id(request.rideId)
-# 				request.requester = User.get_by_id(request.requesterId)
-# 				requests.append(request)
-# 			except:
-# 				pass
-			
+		user = User.get_by_id(self.getUser())
+		requests = user.passenger_requests
+
 		# retrieve any response notifictaions from other users
-		responses = []
-		for driverNot in list(db.GqlQuery('SELECT * FROM DriverResponseNotification WHERE requesterId=:id', id=self.getUser())):
-			# driver response: (accepted-ride | rejected-ride)
-			# has a ride associated with it
-			try:
-				response = driverNot
-				ride = Ride.get_by_id(driverNot.rideId)
-				response.response = driverNot.type
-				response.ride = ride
-				responses.append(response)
-			except:
-				pass
+		responses = user.driver_responses
 		
 		# retrieve pending payments
 		
-		#requests = list(db.GqlQuery('SELECT * FROM Request WHERE driverId=:userId', userId=self.getUser()))
-		#for request in requests:
-		#	request.ride = Ride.get_by_id(request.rideId)
-		#	request.requester = User.get_by_id(request.requesterId)
 		self.render('notification.html', requests=requests, responses=responses, error=error)
 
 	def get(self):
@@ -56,21 +32,20 @@ class Notification(Handler):
 		if accepted:
 			rideId = int(self.request.get("rideId"))
 			requesterId = int(self.request.get("requesterId"))
+			
+			ride = Ride.get_by_id(rideId)
+			driver = ride.driver
+			passenger = User.get_by_id(requesterId)
+			
 			if accepted == 'true':
 				if memcache.get('venmo_token'):
-					ride = Ride.get_by_id(rideId)
-					ride.addPassenger(User.get_by_id(requesterId))
-# 					if ride.passIds:
-# 						passIds = ride.passIds.split(',')
-# 					else:
-# 						passIds = []
-# 					passIds.append(str(requesterId))
-# 					ride.passIds = ','.join(passIds)
+					ride.addPassenger(passenger)
+					
 					access_token = memcache.get('venmo_token')
 					note = "Spent this money on carpooling with college-carpool.appspot.com (Ride #%s)" % (ride.key().id())
 					
-					venmo_email = User.get_by_id(self.getUser()).venmo_email
-					email = venmo_email if venmo_email else User.get_by_id(ride.driverId).email
+					venmo_email = driver.venmo_email
+					email = venmo_email if venmo_email else driver.email
 					amount = ride.cost
 					payload = {
 							"access_token":access_token,
@@ -84,18 +59,17 @@ class Notification(Handler):
 					response = requests.post(url, payload)
 					response_dict = response.json()
 
-					user_address = User.get_by_id(self.getUser()).email
 					sender_address = "notifications@college-carpool.appspotmail.com"
 					subject = "Have a safe upcoming drive!"
 					body = "Thank you for using college-carpool. You are driving from %s to %s" % (ride.start, ride.destination)
-					mail.send_mail(sender_address,[user_address,User.get_by_id(requesterId).email],subject,body)
-					#json.loads(html)
+					mail.send_mail(sender_address,[driver.email, passenger.email],subject,body)
 					ride.put()
+					
 					request = Request.get_by_id(int(self.request.get("requestId")))
 					request.delete()
 					
 					# create an accepted-ride DriverResponseNotification
-					notification = DriverResponseNotification(rideId=rideId, driverId=self.getUser(), requesterId=requesterId, type="accepted-ride")
+					notification = DriverResponseNotification(ride=ride, driver=driver, passenger=passenger, type="accepted-ride")
 					notification.put()
 					
 					#print "Sending response message to " + str(requesterId)
@@ -110,7 +84,7 @@ class Notification(Handler):
 				request.delete()
 				
 				# create a rejected-ride DriverResponseNotification
-				notification = DriverResponseNotification(rideId=rideId, driverId=self.getUser(), requesterId=requesterId, type="rejected-ride")
+				notification = DriverResponseNotification(ride=ride, driver=driver, passenger=passenger, type="rejected-ride")
 				notification.put()
 				
 				#print "Sending response message to " + str(requesterId)

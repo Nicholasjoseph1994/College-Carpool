@@ -43,10 +43,6 @@ class Ride(db.Model):
 
 #Table for requests
 class Request(db.Model):
-# 	driverId = db.IntegerProperty(required=True)
-# 	rideId = db.IntegerProperty(required=True)
-# 	requesterId = db.IntegerProperty(required=True)
-	
 	driver = db.ReferenceProperty(User, required=True, collection_name="requests_driver")
 	ride = db.ReferenceProperty(Ride, required=True, collection_name="ride_requests")
 	passenger = db.ReferenceProperty(User, required=True, collection_name="requests_passenger")
@@ -60,19 +56,21 @@ class Request(db.Model):
 		requestNotification.put()
 
 	def delete(self):
-		PassengerRequestNotification.gql("WHERE requestId=%s" % (self.key().id())).get().delete()
+		for request in self.requests:
+			request.delete()
+# 		PassengerRequestNotification.gql("WHERE requestId=%s" % (self.key().id())).get().delete()
 		super(Request, self).delete()
 
 #Table for requester->driver notifications
 class PassengerRequestNotification(db.Model):
 	request = db.ReferenceProperty(Request, required=True, collection_name="requests")
-	driver = db.ReferenceProperty(User, required=True, collection_name="request_notifications")
+	driver = db.ReferenceProperty(User, required=True, collection_name="passenger_requests")
 	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
 
 #Table for driver->requester notifications
 class DriverResponseNotification(db.Model):
-	rideId = db.IntegerProperty(required=True)
-	requesterId = db.IntegerProperty(required=True)
+	ride = db.ReferenceProperty(Ride, required=True, collection_name="driver_responses")
+	passenger = db.ReferenceProperty(User, required=True, collection_name="driver_responses")
 	type = db.StringProperty(required=True, choices=set(["accepted-ride","rejected-ride"]))
 
 # Table for payment statuses
