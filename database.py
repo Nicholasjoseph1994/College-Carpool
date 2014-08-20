@@ -1,25 +1,5 @@
 from google.appengine.ext import db
 
-#Table for Rides 
-class Ride(db.Model):
-	start = db.StringProperty(required = True)
-	destination = db.StringProperty(required=True)
-	startTime = db.DateTimeProperty(auto_now_add=True)
-	driverId = db.IntegerProperty(required=True)
-	passengerMax = db.IntegerProperty(required=True)
-	cost = db.FloatProperty(required=True)
-	driveTime = db.FloatProperty(required=True)
-	driveDistance = db.FloatProperty(required=True)
-	passIds = db.StringProperty(required=False)
-	created = db.DateTimeProperty(auto_now_add=True)
-	
-	def addPassenger(self, passID):
-		passIds = []
-		if self.passIds:
-			passIds = self.passIds.split(',')
-		passIds.append(str(passID))
-		self.passIds = ','.join(passIds)
-	
 #Table for Users
 class User(db.Model):
 	username = db.StringProperty(required=True)
@@ -33,17 +13,50 @@ class User(db.Model):
 	activated = db.BooleanProperty(default=False)
 	recoveryCode = db.StringProperty()
 	
+	rideIds = db.ListProperty(int)
+	
+	def addRide(self, ride):
+		self.rideIds.append(ride.key().id())
+		
+	def getRides(self):
+		return [Ride.get_by_id(ride) for ride in self.rideIds]
+
+#Table for Rides 
+class Ride(db.Model):
+	start = db.StringProperty(required = True)
+	destination = db.StringProperty(required=True)
+	startTime = db.DateTimeProperty(auto_now_add=True)
+	driver = db.ReferenceProperty(User, required=True)
+	passengerMax = db.IntegerProperty(required=True)
+	cost = db.FloatProperty(required=True)
+	driveTime = db.FloatProperty(required=True)
+	driveDistance = db.FloatProperty(required=True)
+	created = db.DateTimeProperty(auto_now_add=True)
+	
+	passIds = db.ListProperty(int)
+	
+	def addRide(self, passenger):
+		self.passIds.append(passenger.key().id())
+		
+	def getRides(self):
+		return [User.get_by_id(passenger) for passenger in self.passIds]
+
 #Table for requests
 class Request(db.Model):
-	driverId = db.IntegerProperty(required=True)
-	rideId = db.IntegerProperty(required=True)
-	requesterId = db.IntegerProperty(required=True)
+# 	driverId = db.IntegerProperty(required=True)
+# 	rideId = db.IntegerProperty(required=True)
+# 	requesterId = db.IntegerProperty(required=True)
+	
+	driver = db.ReferenceProperty(User, required=True, collection_name="requests_driver")
+	ride = db.ReferenceProperty(Ride, required=True, collection_name="ride_requests")
+	passenger = db.ReferenceProperty(User, required=True, collection_name="requests_passenger")
+	
 	message = db.TextProperty(required=False)
 
 	def put(self):
 		super(Request, self).put()
 		# add a PassengerRequestNotification to driverId
-		requestNotification = PassengerRequestNotification(requestId=self.key().id(), driverId=self.driverId, type="passenger-request")
+		requestNotification = PassengerRequestNotification(request=self, driver=self.driver, type="passenger-request")
 		requestNotification.put()
 
 	def delete(self):
@@ -52,8 +65,8 @@ class Request(db.Model):
 
 #Table for requester->driver notifications
 class PassengerRequestNotification(db.Model):
-	requestId = db.IntegerProperty(required=True)
-	driverId = db.IntegerProperty(required=True)
+	request = db.ReferenceProperty(Request, required=True, collection_name="requests")
+	driver = db.ReferenceProperty(User, required=True, collection_name="request_notifications")
 	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
 
 #Table for driver->requester notifications

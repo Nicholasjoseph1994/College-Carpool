@@ -76,10 +76,10 @@ class Handler(webapp2.RequestHandler):
 			if userId:
 				userId = int(userId)
 
-		# create channel is not already created
+		# create channel if not already created
 		channel_token = self.session.get('channel_token')
 		if userId and channel_token is None:
-			channel_token = channel.create_channel(str(userId))
+			channel_token = channel.create_channel(str(userId), duration_minutes=1440)
 			#self.response.set_cookie('channel_token', channel_token)
 			self.session['channel_token'] = channel_token
 			print str(userId) + " created channel w/ token= " + channel_token

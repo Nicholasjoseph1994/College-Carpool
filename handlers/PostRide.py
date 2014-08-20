@@ -100,16 +100,20 @@ class PostRide(Handler):
 				self.render_front(start.formatted_address, destination.formatted_address,
 						'', '', cost, passengerMax, error)
 			else:
+				driver = User.get_by_id(driverId)
 				ride = Ride(start=start.formatted_address,
 						destination=destination.formatted_address,
 						startTime=startTime,
 						cost=float(cost),
 						passengerMax=passengerMax,
-						driverId=driverId,
-						passIds='',
+						driver=driver,
 						driveTime=float(rideDuration),
 						driveDistance=float(rideDistance))
 				ride.put()
+				
+				driver.addRide(ride)
+				driver.put()
+				
 
 				time.sleep(.25) #so that it has time to enter the ride and it appears on home page
 				self.redirect("home")

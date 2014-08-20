@@ -10,17 +10,17 @@ class Notification(Handler):
 	#Gathers requests and then displays them
 	def writePage(self, error=''):
 		# retrieve any requests from other users
-		requests = []
-		for passengerNot in list(db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser())):
-			# request from passenger: (passenger-request)
-			# has a request associated with it
-			try:
-				request = Request.get_by_id(passengerNot.requestId)
-				request.ride = Ride.get_by_id(request.rideId)
-				request.requester = User.get_by_id(request.requesterId)
-				requests.append(request)
-			except:
-				pass
+		requests = User.get_by_id(self.getUser()).requests_driver
+# 		for passengerNot in list(db.GqlQuery('SELECT * FROM PassengerRequestNotification WHERE driverId=:id', id=self.getUser())):
+# 			# request from passenger: (passenger-request)
+# 			# has a request associated with it
+# 			try:
+# 				request = Request.get_by_id(passengerNot.requestId)
+# 				request.ride = Ride.get_by_id(request.rideId)
+# 				request.requester = User.get_by_id(request.requesterId)
+# 				requests.append(request)
+# 			except:
+# 				pass
 			
 		# retrieve any response notifictaions from other users
 		responses = []
@@ -59,7 +59,7 @@ class Notification(Handler):
 			if accepted == 'true':
 				if memcache.get('venmo_token'):
 					ride = Ride.get_by_id(rideId)
-					ride.addPassenger(requesterId)
+					ride.addPassenger(User.get_by_id(requesterId))
 # 					if ride.passIds:
 # 						passIds = ride.passIds.split(',')
 # 					else:

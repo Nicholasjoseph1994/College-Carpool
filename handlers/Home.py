@@ -13,13 +13,14 @@ class Home(Handler):
 		self.checkLogin()
 
 		#Rides
-		rides = list(Ride.all())
+		#rides = list(Ride.all())
 		userId = self.getUser()
+		rides = User.get_by_id(userId).getRides()
 		#note: sort this later
-		if len(rides)>0:
-			rides = filter(lambda x: x.driverId == userId or (x.passIds and str(userId) in x.passIds), rides)
+		#if len(rides)>0:
+		#	rides = filter(lambda x: x.driverId == userId or (x.passIds and str(userId) in x.passIds), rides)
 		for ride in rides:
-			driver = User.get_by_id(ride.driverId)
+			driver = ride.driver
 			driverName = driver.username
 			driverEmail = driver.email
 			ride.driverName = driverName

@@ -93,7 +93,7 @@ function calcRoute() {
 	
 	<tr>
 		<form method="post"> 
-			<input type="hidden" name="driverId" value={{ride.driverId}} />
+			<input type="hidden" name="driverId" value={{ride.driver.key().id()}} />
 			<input type="hidden" name="rideId" value={{ride.key().id()}} />
 		<td>
 			<textarea class="form-control" style="background-color: linen" name="message" placeholder="Message for the driver. Include if you would like to join for all or part of the route." rows="3"></textarea>
