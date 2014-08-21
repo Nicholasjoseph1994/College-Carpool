@@ -3,13 +3,13 @@ Created on Aug 19, 2014
 
 @author: svatasoiu
 '''
-from Handler import Handler
+from Handler import Handler, check_login
 from database import User
 import validation
 
 class AdminPage(Handler):
+    @check_login
     def get(self):
-        self.checkLogin()
         user = User.get_by_id(self.getUser())
         self.render('admin.html', user=user)
     

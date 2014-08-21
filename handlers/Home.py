@@ -1,16 +1,13 @@
 from google.appengine.ext import db
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import time
 
 class Home(Handler):
-	def render_front(self, rides, requests):
-		self.render("home.html", rides=rides, requests=requests)
-
+	@check_login
 	def get(self):
 		self.deleteOldRides()
 		time.sleep(.25)
-		self.checkLogin()
 
 		#Rides
 		userId = self.getUser()
@@ -25,7 +22,7 @@ class Home(Handler):
 				
 		#Requests
 		requests = list(user.requests_passenger)
-		self.render_front(rides, requests)
+		self.render("home.html", rides=rides, requests=requests)
 
 	#This is for if they are cancelling a ride
 	def post(self):

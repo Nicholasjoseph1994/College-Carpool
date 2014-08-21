@@ -1,4 +1,4 @@
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import datetime
 import time
@@ -10,8 +10,8 @@ class PostRide(Handler):
 	def render_front(self, start="", destination="", startDate="", startTime="", cost="", passengerMax="", error=""):
 		self.render("postRide.html", start=start, destination=destination, startDate=startDate, startTime=startTime, cost=cost, passengerMax=passengerMax, error=error)
 
+	@check_login
 	def get(self):
-		self.checkLogin()
 		self.render_front()
 
 	#Posts a new ride for people to join

@@ -1,12 +1,12 @@
 
-from Handler import Handler
+from Handler import Handler, check_login
 from database import User, Ride
 
 class View(Handler):
+	@check_login
 	def get(self):
 		#Initialization
 		self.deleteOldRides()
-		self.checkLogin()
 		
 		userID = self.getUser()
 		user = User.get_by_id(userID)

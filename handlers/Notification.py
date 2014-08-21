@@ -1,5 +1,5 @@
 from google.appengine.ext import db
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 from google.appengine.api import mail, memcache, channel
 import time
@@ -20,8 +20,8 @@ class Notification(Handler):
 		
 		self.render('notification.html', requests=requests, responses=responses, error=error)
 
+	@check_login
 	def get(self):
-		self.checkLogin()
 		self.writePage()
 
 	#If the user accepts the request, it charges the user who requested

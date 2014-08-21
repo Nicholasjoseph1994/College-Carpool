@@ -1,12 +1,12 @@
 from google.appengine.ext import db
 from google.appengine.api import channel
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import time
 
 class RidePage(Handler):
+	@check_login
 	def get(self, rideId):
-		self.checkLogin()
 		ride = Ride.get_by_id(int(rideId))
 		ride.driverName = ride.driver.username
 		self.render("ride.html", ride=ride)

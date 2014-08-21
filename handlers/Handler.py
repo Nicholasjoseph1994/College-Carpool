@@ -2,6 +2,7 @@ import webapp2
 import os
 import jinja2
 import validation
+from functools import wraps
 from database import *
 from google.appengine.api import mail, channel, memcache
 from webapp2_extras import sessions, sessions_memcache
@@ -85,11 +86,18 @@ class Handler(webapp2.RequestHandler):
 	#Checks if user is logged in and redirects to login page if not
 	def checkLogin(self, validate=True):
 		userID = self.getUser()
-		if not userID:
-			self.redirect('login')
-			return
-		elif validate and not User.get_by_id(userID).activated:
-			self.redirect('verify')
+		if userID:
+			user = User.get_by_id(userID)
+			if not userID or not user:
+				self.redirect('/login')
+				return False
+			elif validate and not user.activated:
+				self.redirect('/verify')
+				return False
+		else:
+			self.redirect('/login')
+			return False
+		return True
 
 	#Deletes past rides
 	def deleteOldRides(self):
@@ -124,3 +132,19 @@ class Handler(webapp2.RequestHandler):
 		rideDistance -= rideDistance % .1 #truncates to 1 digit
 		rideStats['rows'][0]['elements'][0]['distance']['value'] = rideDistance
 		return rideStats['rows'][0]['elements'][0]
+
+def check_login(*outer_args):
+	validate = True
+	def decorator(view_func):
+		def wrapper(self, *args, **kwargs):
+			if not self.checkLogin(validate=validate):
+				return
+			else:
+				return view_func(self, *args, **kwargs)
+		return wrapper
+	
+	if len(outer_args) == 1 and callable(outer_args[0]):
+		return decorator(outer_args[0])
+	else:
+		validate = outer_args[0]
+		return decorator

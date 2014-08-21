@@ -3,13 +3,13 @@ Created on Aug 12, 2014
 
 @author: svatasoiu
 '''
-from Handler import Handler
+from Handler import Handler, check_login
 from database import User
 from time import sleep
 
 class Verify(Handler):
+    @check_login(False)
     def get(self):
-        self.checkLogin(validate=False)
         code = self.request.get("code")
         user = User.get_by_id(self.getUser())
         if not code:
