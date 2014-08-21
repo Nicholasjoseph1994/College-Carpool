@@ -46,7 +46,12 @@
 		<script>
 			var nextURL = '?next=' + window.location.pathname;
 			$("#venmologout").attr("href", '/venmo-logout' + nextURL);
-			$("#venmologin").attr("href", $("#venmologin").attr("href") + "&redirect_uri=" + window.location.origin + "/oauth-authorized" + nextURL);
+			
+			var venmo_url = window.location.origin
+			if(venmo_url.match('^http://')){
+			     venmo_url = venmo_url.replace("http://","https://")
+			}
+			$("#venmologin").attr("href", $("#venmologin").attr("href") + "&redirect_uri=" + venmo_url + "/oauth-authorized" + nextURL);
 			
 			var state = { 
 				username: '{{ username }}',
