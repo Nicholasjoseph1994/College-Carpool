@@ -8,13 +8,22 @@
 		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/static/css/base.css" rel="stylesheet">
 		<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="_ah/channel/jsapi"></script>
 	</head>
 
 	<body>
 	
 {% block content %}
-<script type="text/javascript" src="static/js/recover.js"></script>
+<script>
+	$(document).on("click", "#recoverUsernameBtn", function () {
+		$("#recoverUsername").removeClass("hidden");
+		$("#recoverPassword").addClass("hidden");
+	});
+	
+	$(document).on("click", "#recoverPasswordBtn", function () {
+		$("#recoverUsername").addClass("hidden");
+		$("#recoverPassword").removeClass("hidden");
+	});
+</script>
 
 {% if recover and userID %}
 <div id="changePassword" align="center">

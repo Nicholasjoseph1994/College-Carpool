@@ -1,8 +1,23 @@
 {% extends "base.html"%}
 
 {% block content %}
-<script type="text/javascript" src="static/js/admin.js"></script>
-<link href="/static/css/admin.css" rel="stylesheet">
+<script>
+	$(document).on("click", "button.swap-change", function () {
+		$("#changePassword").toggleClass("hidden");
+		$("#otherChanges").toggleClass("hidden");
+	});
+</script>
+
+<!--<link href="/static/css/admin.css" rel="stylesheet">-->
+<style>
+	#changePassword, #otherChanges {
+		text-align: center;
+	}
+	
+	button.swap-change {
+		margin-bottom: 10px;
+	}
+</style>
 
 <div id="changePassword" class="hidden">
 	<div align="center">
