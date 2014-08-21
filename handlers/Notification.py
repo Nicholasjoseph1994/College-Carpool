@@ -66,7 +66,7 @@ class Notification(Handler):
 					ride.put()
 					
 					request = Request.get_by_id(int(self.request.get("requestId")))
-					request.delete()
+					request.archive() #.delete()
 					
 					# create an accepted-ride DriverResponseNotification
 					notification = DriverResponseNotification(ride=ride, driver=driver, passenger=passenger, type="accepted-ride")
@@ -81,7 +81,7 @@ class Notification(Handler):
 					self.writePage(error='Please sign in with Venmo!.')
 			else:
 				request = Request.get_by_id(int(self.request.get("requestId")))
-				request.delete()
+				request.archive() #.delete()
 				
 				# create a rejected-ride DriverResponseNotification
 				notification = DriverResponseNotification(ride=ride, driver=driver, passenger=passenger, type="rejected-ride")

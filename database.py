@@ -25,6 +25,9 @@ class User(db.Model):
 	@property
 	def rides(self):
 		return [Ride.get_by_id(ride) for ride in self.rideIds]
+	
+	def archive(self):
+		archive_entity(self, User_ARCHIVE)
 
 #Table for Rides 
 class Ride(db.Model):
@@ -50,6 +53,9 @@ class Ride(db.Model):
 	@property
 	def passengers(self):
 		return [User.get_by_id(passenger) for passenger in self.passIds]
+	
+	def archive(self):
+		archive_entity(self, Ride_ARCHIVE)
 
 #Table for requests
 class Request(db.Model):
@@ -66,14 +72,18 @@ class Request(db.Model):
 		requestNotification.put()
 
 	def delete(self):
-		for request in self.requests:
+		for request in self.passenger_requests:
 			request.delete()
 # 		PassengerRequestNotification.gql("WHERE requestId=%s" % (self.key().id())).get().delete()
+
 		super(Request, self).delete()
+		
+	def archive(self):
+		archive_entity(self, Request_ARCHIVE)
 
 #Table for requester->driver notifications
 class PassengerRequestNotification(db.Model):
-	request = db.ReferenceProperty(Request, required=True, collection_name="requests")
+	request = db.ReferenceProperty(Request, required=True, collection_name="passenger_requests")
 	driver = db.ReferenceProperty(User, required=True, collection_name="passenger_requests")
 	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
 
@@ -96,3 +106,75 @@ class Payment(db.Model):
 	amount = db.FloatProperty(required=True)
 	note = db.StringProperty()
 	lastUpdate = db.DateTimeProperty()
+
+# archive models (should be clones of actual models)
+# perhaps, need to look at references
+# modify delete in models so that in actual model: modify references
+# 								  in archive: delete references
+
+#Table for Rides 
+class User_ARCHIVE(db.Model):
+	username = db.StringProperty(required=True)
+	passHash = db.TextProperty(required=True)
+	email = db.StringProperty(required=True)
+	venmo_email = db.StringProperty(required=False)
+	venmoID = db.IntegerProperty(required=False)
+	bio = db.TextProperty(required=False)
+	created = db.DateTimeProperty(auto_now_add=True)
+	activationCode = db.StringProperty()
+	activated = db.BooleanProperty(default=False)
+	recoveryCode = db.StringProperty()
+
+class Ride_ARCHIVE(db.Model):
+	start = db.StringProperty(required = True)
+	destination = db.StringProperty(required=True)
+	driver = db.StringProperty(required=True)
+	startTime = db.DateTimeProperty(auto_now_add=True)
+	passengerMax = db.IntegerProperty(required=True)
+	cost = db.FloatProperty(required=True)
+	driveTime = db.FloatProperty(required=True)
+	driveDistance = db.FloatProperty(required=True)
+	created = db.DateTimeProperty(auto_now_add=True)
+
+class Request_ARCHIVE(db.Model):
+	driver = db.StringProperty(required=True)
+	ride = db.StringProperty(required=True)
+	passenger = db.StringProperty(required=True)
+	
+	message = db.TextProperty(required=False)
+
+# Archiving functions
+def archive_entity(e, to_model, **extra_args):
+	archived = clone_entity(e, to_model, **extra_args)
+	archived.put()
+	
+	e.delete()
+
+def clone_entity(e, to_klass, **extra_args):
+	"""Clones an entity, adding or overriding constructor attributes.
+
+  The cloned entity will have exactly the same property values as the original
+  entity, except where overridden. By default it will have no parent entity or
+  key name, unless supplied.
+
+  Args:
+    e: The entity to clone
+    extra_args: Keyword arguments to override from the cloned entity and pass
+      to the constructor.
+  Returns:
+    A cloned, possibly modified, copy of entity e.
+    """
+	klass = e.__class__
+		
+	props = dict() 
+
+	for k, v in klass.properties().iteritems():
+		if isinstance(v, db.ReferenceProperty):
+			# copy reference property key as StringProperty
+			key = getattr(klass, k).get_value_for_datastore(e)
+			props[k] = str(key)
+		else:
+			props[k] = v.__get__(e, klass)
+			
+	props.update(extra_args)
+	return to_klass(**props)
