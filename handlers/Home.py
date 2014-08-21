@@ -15,16 +15,16 @@ class Home(Handler):
 		#Rides
 		userId = self.getUser()
 		user = User.get_by_id(userId)
-		rides = User.get_by_id(userId).getRides()
+		rides = user.rides
+
 		#note: sort this later
 		for ride in rides:
 			driver = ride.driver
 			ride.driverName = driver.username
 			ride.driverEmail = driver.email
-			ride.passengers = ride.getPassengers()
 				
 		#Requests
-		requests = list(user.requests_passenger.run())
+		requests = list(user.requests_passenger)
 		self.render_front(rides, requests)
 
 	#This is for if they are cancelling a ride

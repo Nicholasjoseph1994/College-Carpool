@@ -45,7 +45,7 @@ class PasswordRecovery(Handler):
                     user = User.gql("WHERE email=:email", email=email).get()
                 
                 salt = validation.make_salt(25)
-                link = "https://%s/recover?userID=%s&code=%s" % (self.request.host, user.key().id(), salt)
+                link = "http://%s/recover?userID=%s&code=%s" % (self.request.host, user.key().id(), salt)
 
                 user.recoveryCode = salt
                 user.put()

@@ -1,7 +1,6 @@
 
-from google.appengine.ext import db
 from Handler import Handler
-from database import User, Ride, Request
+from database import User, Ride
 
 class View(Handler):
 	def get(self):

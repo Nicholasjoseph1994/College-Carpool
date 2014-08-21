@@ -34,7 +34,7 @@
 			{% if response.type == "accepted-ride" %}
 			{% set panelType = "success" %}
 			{% set status = "Accepted!" %}
-			{% elif response.response == "rejected-ride" %}
+			{% elif response.type == "rejected-ride" %}
 			{% set panelType = "danger" %}
 			{% set status = "Rejected" %}
 			{% endif %}

@@ -1,11 +1,8 @@
-from google.appengine.ext import db
 from Handler import Handler
 from database import *
 import datetime
 import time
 import re
-import json
-import urllib
 from pygeocoder import Geocoder
 
 class PostRide(Handler):

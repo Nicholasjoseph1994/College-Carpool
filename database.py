@@ -22,7 +22,8 @@ class User(db.Model):
 		rideID = ride.key().id()
 		self.rideIds = [r for r in self.rideIds if r != rideID]
 		
-	def getRides(self):
+	@property
+	def rides(self):
 		return [Ride.get_by_id(ride) for ride in self.rideIds]
 
 #Table for Rides 
@@ -46,7 +47,8 @@ class Ride(db.Model):
 		passID = passenger.key().id()
 		self.passIds = [p for p in self.passIds if p != passID]
 	
-	def getPassengers(self):
+	@property
+	def passengers(self):
 		return [User.get_by_id(passenger) for passenger in self.passIds]
 
 #Table for requests
