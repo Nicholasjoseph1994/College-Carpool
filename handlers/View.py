@@ -17,7 +17,7 @@ class View(Handler):
 		rides = filter(notInRide, rides)
 
 		#Finds the requests the user has made
-		requests = user.requests_passenger
+		requests = list(user.requests_passenger)
 		requests = [x.ride.key().id() for x in requests]
 		rides = filter(lambda x: x.key().id() not in requests, rides)
 		

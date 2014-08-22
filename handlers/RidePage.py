@@ -9,6 +9,8 @@ class RidePage(Handler):
 	def get(self, rideId):
 		ride = Ride.get_by_id(int(rideId))
 		ride.driverName = ride.driver.username
+		ride.seatsLeft = ride.passengerMax - len(ride.passIds)
+		
 		self.render("ride.html", ride=ride)
 		
 	def post(self, rideId):

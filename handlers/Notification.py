@@ -10,7 +10,7 @@ class Notification(Handler):
 	def writePage(self, error=''):
 		# retrieve any requests from other users
 		user = User.get_by_id(self.getUser())
-		requests = user.passenger_requests
+		requests = list(user.passenger_requests)
 
 		# retrieve any response notifictaions from other users
 		responses = list(user.driver_responses)
