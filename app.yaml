@@ -5,6 +5,14 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /static/css/(bootstrap.*|base)\.css
+  static_dir: static/css
+  expiration: "30m"
+
+- url: /static/js/(bootstrap.min|jquery.*)\.js
+  static_dir: static/js
+  expiration: "30m"
+
 - url: /static
   static_dir: static
 
