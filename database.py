@@ -9,7 +9,7 @@ class User(db.Model):
 	venmoID = db.IntegerProperty(required=False)
 	bio = db.TextProperty(required=False)
 	created = db.DateTimeProperty(auto_now_add=True)
-	activationCode = db.StringProperty()
+	activationCode = db.StringProperty(required=True)
 	activated = db.BooleanProperty(default=False)
 	recoveryCode = db.StringProperty()
 	

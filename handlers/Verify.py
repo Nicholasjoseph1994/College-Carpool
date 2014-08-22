@@ -20,6 +20,7 @@ class Verify(Handler):
                 user.put()
                 #self.render("verify.html", color="green", status="Successfully Verified :)")
                 #sleep(2.0)
+                self.response.headers.add_header('Set-Cookie', str('is_user_activated=%s; Path=/' % "True"))
                 self.redirect("/view")
             else:
                 self.render("verify.html", color="red", status="Not the right activation code :(")

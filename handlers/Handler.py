@@ -87,11 +87,12 @@ class Handler(webapp2.RequestHandler):
         """Checks if user is logged in and redirects to login page if not."""
         userID = self.getUser()
         if userID:
-            user = User.get_by_id(userID)
-            if not userID or not user:
+            is_user_activated = self.request.cookies.get('is_user_activated')
+            
+            if not userID:
                 self.redirect('/login')
                 return False
-            elif validate and not user.activated:
+            elif validate and is_user_activated != "True":
                 self.redirect('/verify')
                 return False
         else:

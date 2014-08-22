@@ -4,7 +4,7 @@ import validation
 
 class Login(Handler):
     def write_form(self, username="", error=""):
-        rides = list(db.GqlQuery("SELECT * FROM Ride"))
+        rides = list(db.GqlQuery("SELECT * FROM Ride").fetch(10))
         self.render("login.html", rides=rides, username=username, error=error)
 
     def get(self):
@@ -26,6 +26,7 @@ class Login(Handler):
                 self.response.headers['Content-Type'] = 'text/plain'
                 cookie_val = validation.make_secure_val(str(user_id))
                 self.response.headers.add_header('Set-Cookie',str('user=%s; Path=/' % cookie_val))
+                self.response.headers.add_header('Set-Cookie', str('is_user_activated=%s; Path=/' % str(user.activated)))
                 self.redirect("home")
             else:
                 self.write_form(error="Invalid Password", username=username)
