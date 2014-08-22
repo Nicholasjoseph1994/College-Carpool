@@ -6,29 +6,34 @@ Created on Aug 19, 2014
 from Handler import Handler
 from google.appengine.api import mail
 from database import User, Payment
+import json
 
 class VenmoWebhook(Handler):
     def get(self):
         self.response.write(self.request.get('venmo_challenge'))
     
     def post(self):
-        date = self.response.get('date_created')
-        updateType = self.response.get('type')
-        data = self.response.get('data')
+        print "Got Venmo payment update"
+        print self.request.body
+        js = json.loads(self.request.body)
+        
+        date = js['date_created']
+        updateType = js['type']
+        data = js['data']
         
         if updateType == "payment.created":
-            driverID = data.get('target').get('user').get('id')
-            passengerID = data.get('actor').get('user').get('id')
+            driverID = data['target']['user']['id']
+            passengerID = data['actor']['user']['id']
             driver = User.gql('WHERE venmoID=' + driverID).get()
             passenger = User.gql('WHERE venmoID=' + passengerID).get()
             
-            payment = Payment(type="Venmo", dateCreated=date, lastUpdated=date, status="pending",
-                              driver=driver, passenger=passenger, apiID=data.get('id'), 
-                              amount=data.get('amount'), note=data.get('note'))
+            payment = Payment(type="Venmo", dateCreated=date, lastUpdated=date, status=data['status'],
+                              driver=driver, passenger=passenger, apiID=data['id'], 
+                              amount=data['amount'], note=data['note'])
             payment.put()
         elif updateType == "payment.updated":
-            status = data.get('status')
-            payment = Payment.gql("WHERE apiID=" + data.get('id'))
+            status = data['status']
+            payment = Payment.gql("WHERE apiID=" + data['id'])
             payment.status = status
             payment.lastUpdated = date # need to check that this is working properly
             
