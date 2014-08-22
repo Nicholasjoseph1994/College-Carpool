@@ -2,9 +2,8 @@ import webapp2
 import os
 import jinja2
 import validation
-from functools import wraps
 from database import *
-from google.appengine.api import mail, channel, memcache
+from google.appengine.api import mail, channel
 from webapp2_extras import sessions, sessions_memcache
 import datetime
 import urllib
@@ -40,7 +39,7 @@ class Handler(webapp2.RequestHandler):
 
     def render_str(self, template, **params):
         """Returns as a string the html of the page."""
-        t = jinja_env.get_template(template)
+        t = JINJA_ENV.get_template(template)
         return t.render(params)
 
     def render(self, template, **kw):
@@ -51,10 +50,10 @@ class Handler(webapp2.RequestHandler):
             # get notification_count
             notification_count = user.passenger_requests.count() + user.driver_responses.count()
 
-            if memcache.get('signed_into_venmo'):
-                venmo_username = memcache.get('venmo_username')
+            if self.session.get('signed_into_venmo'):
+                venmo_username = self.session.get('venmo_username')
                 
-                venmo_token = memcache.get('venmo_token')
+                venmo_token = self.session.get('venmo_token')
 
                 self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
                                     notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
@@ -101,7 +100,7 @@ class Handler(webapp2.RequestHandler):
         return True
 
     def deleteOldRides(self):
-       """Deletes past rides."""
+        """Deletes past rides."""
         now = datetime.datetime.now()
         rides = [ride for ride in Ride.all() if ride.startTime < now]
         for ride in rides:
