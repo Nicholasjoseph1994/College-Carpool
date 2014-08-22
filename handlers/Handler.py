@@ -3,7 +3,7 @@ import os
 import jinja2
 import validation
 from database import *
-from google.appengine.api import mail, channel
+from google.appengine.api import mail, memcache, channel
 from webapp2_extras import sessions, sessions_memcache
 import datetime
 import urllib
@@ -76,10 +76,15 @@ class Handler(webapp2.RequestHandler):
         # create channel if not already created
         channel_token = self.session.get('channel_token')
         if userId and channel_token is None:
-            channel_token = channel.create_channel(str(userId), duration_minutes=1440)
-            #self.response.set_cookie('channel_token', channel_token)
+            cached_token = memcache.get('channel_token-' + str(userId))
+            if cached_token:
+                channel_token = cached_token
+            else:
+                channel_token = channel.create_channel(str(userId), duration_minutes=1440)
+                print str(userId) + " created channel w/ token= " + channel_token
+                memcache.add('channel_token-' + str(userId), channel_token)
+                
             self.session['channel_token'] = channel_token
-            print str(userId) + " created channel w/ token= " + channel_token
 
         return userId
 
