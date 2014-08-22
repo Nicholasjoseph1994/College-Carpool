@@ -101,12 +101,13 @@ class Handler(webapp2.RequestHandler):
 
 	#Deletes past rides
 	def deleteOldRides(self):
-		rides = [ride for ride in Ride.all() if ride.startTime < datetime.datetime.now()]
+		now = datetime.datetime.now()
+		rides = [ride for ride in Ride.all() if ride.startTime < now]
 		for ride in rides:
 			for request in Request.all():
 				if request.rideId == ride.key().id():
-					request.delete()
-			ride.delete()
+					request.archive()
+			ride.archive()
 
 	def sendActivationEmail(self, email, code):
 		message = mail.EmailMessage()
