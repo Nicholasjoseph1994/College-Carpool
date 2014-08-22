@@ -1,7 +1,6 @@
-from google.appengine.ext import db
 from Handler import Handler, check_login
 from database import *
-from google.appengine.api import mail, memcache, channel
+from google.appengine.api import mail, channel
 import time
 import logging
 from lib import requests
@@ -38,10 +37,10 @@ class Notification(Handler):
 			passenger = User.get_by_id(requesterId)
 			
 			if accepted == 'true':
-				if memcache.get('venmo_token'):
+				if self.session.get('venmo_token'):
 					ride.addPassenger(passenger)
 					
-					access_token = memcache.get('venmo_token')
+					access_token = self.session.get('venmo_token')
 					note = "Spent this money on carpooling with college-carpool.appspot.com (Ride #%s)" % (ride.key().id())
 					
 					venmo_email = driver.venmo_email

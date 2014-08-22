@@ -1,8 +1,7 @@
-from google.appengine.api import memcache
 from Handler import Handler
 from lib import requests
 from database import User
-import os, constants
+import constants
 
 class oauthAuthentication(Handler):
 	def get(self):
@@ -23,12 +22,10 @@ class oauthAuthentication(Handler):
 		
 		access_token = response_dict.get('access_token')
 		user = response_dict.get('user').get('username')
-		balance = response_dict.get('balance')
 		
-		memcache.add('venmo_token', access_token)
-		memcache.add('venmo_username', user)
-		memcache.add('venmo_balance', balance)
-		memcache.add('signed_into_venmo', True)
+		self.session['venmo_token'] = access_token
+		self.session['venmo_username'] = user
+		self.session['signed_into_venmo'] = True
 		
 		nextURL = self.request.get('next')
 		return self.redirect(nextURL if nextURL else '/home')

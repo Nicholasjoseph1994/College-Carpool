@@ -2,9 +2,8 @@ import webapp2
 import os
 import jinja2
 import validation
-from functools import wraps
 from database import *
-from google.appengine.api import mail, channel, memcache
+from google.appengine.api import mail, channel
 from webapp2_extras import sessions, sessions_memcache
 import datetime
 import urllib
@@ -50,10 +49,10 @@ class Handler(webapp2.RequestHandler):
 			# get notification_count
 			notification_count = user.passenger_requests.count() + user.driver_responses.count()
 
-			if memcache.get('signed_into_venmo'):
-				venmo_username = memcache.get('venmo_username')
+			if self.session.get('signed_into_venmo'):
+				venmo_username = self.session.get('venmo_username')
 				
-				venmo_token = memcache.get('venmo_token')
+				venmo_token = self.session.get('venmo_token')
 
 				self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
 									notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, 
