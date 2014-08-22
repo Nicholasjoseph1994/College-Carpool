@@ -6,7 +6,20 @@
 		<title>College Carpool</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-		<link href="/static/css/base.css" rel="stylesheet">
+		<!--<link href="/static/css/base.css" rel="stylesheet">-->
+		<style>
+			body { padding-top: 70px; padding-left: 20px; background: rgba(230, 230, 255, .5); }
+	
+			li { padding-right: 50px; }			
+						
+			.flex-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(0, 0, 255, 0.3); 
+				color:rgb(255,255,255); border-radius: 1em; text-align: center; }
+			
+			.flex2-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(255, 255, 0, 0.3);
+				color:rgb(0,0,0); border-radius: 1em; text-align: center; }
+			
+			.hidden { display: none; }
+		</style>
 		<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="_ah/channel/jsapi"></script>
 	</head>
@@ -30,7 +43,7 @@
 				</li>
 				<li>
 				{% if venmo_username %}
-				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo</a>
+				<a id='venmologout' title='Press to Logout' href=''>Log out of Venmo</a>
 				{% else %}
 				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance%20access_email&response_type=code">Connect Venmo</a></li> 
 				{% endif %}
