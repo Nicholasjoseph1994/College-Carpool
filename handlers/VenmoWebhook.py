@@ -27,7 +27,7 @@ class VenmoWebhook(Handler):
             driver = User.gql('WHERE venmoID=' + driverID).get()
             passenger = User.gql('WHERE venmoID=' + passengerID).get()
             
-            payment = Payment(type="Venmo", dateCreated=date, lastUpdated=date, status=data['status'],
+            payment = Payment(type="Venmo", dateCreated=date, lastUpdate=date, status=data['status'],
                               driver=driver, passenger=passenger, apiID=data['id'], 
                               amount=data['amount'], note=data['note'])
             payment.put()

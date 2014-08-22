@@ -96,7 +96,7 @@ class DriverResponseNotification(db.Model):
 # Table for payment statuses
 class Payment(db.Model):
 	type = db.StringProperty(required=True, choices=set(["Venmo"]))
-	dateCreated = db.DateTimeProperty(required=True)
+	dateCreated = db.StringProperty(required=True)
 	status = db.StringProperty(required=True)
 	
 	driver = db.ReferenceProperty(User, required=True, collection_name="incoming_payments")
@@ -105,7 +105,7 @@ class Payment(db.Model):
 	apiID = db.StringProperty(required=True)
 	amount = db.FloatProperty(required=True)
 	note = db.StringProperty()
-	lastUpdate = db.DateTimeProperty()
+	lastUpdate = db.StringProperty()
 
 # archive models (should be clones of actual models)
 # perhaps, need to look at references
