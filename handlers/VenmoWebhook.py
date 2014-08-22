@@ -22,8 +22,8 @@ class VenmoWebhook(Handler):
         data = js['data']
         
         if updateType == "payment.created":
-            driverID = data['target']['user']['id']
-            passengerID = data['actor']['user']['id']
+            driverID = data['target']['id']
+            passengerID = data['actor']['target']['id']
             driver = User.gql('WHERE venmoID=' + driverID).get()
             passenger = User.gql('WHERE venmoID=' + passengerID).get()
             
