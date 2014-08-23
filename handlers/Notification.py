@@ -16,7 +16,7 @@ class Notification(Handler):
 		responses = list(user.driver_responses)
 		
 		# retrieve pending payments
-		payments = user.getAllPaymentNotifications()
+		payments = user.payment_notifications
 		
 		self.render('notification.html', 
 				requests=requests, responses=responses, 

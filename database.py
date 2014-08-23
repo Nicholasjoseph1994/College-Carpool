@@ -29,7 +29,8 @@ class User(db.Model):
 	def archive(self):
 		archive_entity(self, User_ARCHIVE)
 		
-	def getAllPayments(self):
+	@property
+	def payments(self):
 		incoming_payments = list(self.incoming_payments)
 		for payment in incoming_payments:
 			payment.direction = "incoming"
@@ -39,7 +40,8 @@ class User(db.Model):
 		
 		return incoming_payments + outgoing_payments
 	
-	def getAllPaymentNotifications(self):
+	@property
+	def payment_notifications(self):
 		incoming_payments = list(self.incoming_payment_updates)
 		for payment in incoming_payments:
 			payment.direction = "incoming"

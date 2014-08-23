@@ -11,7 +11,7 @@ class Payments(Handler):
     @check_login
     def get(self):
         user = User.get_by_id(self.getUser())
-        payments = user.getAllPayments()
+        payments = user.payments
         
         self.render('payments.html', payments=payments)
     

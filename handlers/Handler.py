@@ -48,7 +48,7 @@ class Handler(webapp2.RequestHandler):
             user = User.get_by_id(self.getUser())
             username = user.username
             # get notification_count
-            notification_count = user.passenger_requests.count() + user.driver_responses.count()
+            notification_count = user.passenger_requests.count() + user.driver_responses.count() + len(user.payment_notifications)
 
             if self.session.get('signed_into_venmo'):
                 venmo_username = self.session.get('venmo_username')
