@@ -63,8 +63,7 @@ class Handler(webapp2.RequestHandler):
             else:
                 self.write(self.render_str(template, username=username, token=self.session.get('channel_token'), 
                                     notification_count=notification_count, CLIENT_ID=constants.CLIENT_ID, **kw))
-        except Exception as e:
-            print str(e)
+        except:
             self.write(self.render_str(template, **kw))
 
     def getUser(self):

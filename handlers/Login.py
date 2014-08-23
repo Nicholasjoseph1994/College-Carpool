@@ -16,6 +16,7 @@ class Login(Handler):
         #Get information from the post request
         username = self.request.get("username")
         password = self.request.get("password")
+
         user = db.GqlQuery('SELECT * FROM User WHERE username=:username',
                            username=username).get()
         if user:

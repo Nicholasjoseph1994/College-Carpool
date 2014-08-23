@@ -30,27 +30,26 @@
 	</head>
  
 
-
  <div id="map-canvas"></div>
 	<body>
     <h1 align="center" id="title"><font color="8A2BE2" >College Carpool</font></h1>
-<form class="form-horizontal" align="center" method="post">
-	<div class="form-group" align="center">
-		<label class="col-sm-4 control-label" > Username:</label>
-		<input type="text" size="40" class="col-sm-4" placeholder="Username" name= "username" value={{username}} >
-	</div>
-
+	<form class="form-horizontal" align="center" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label" > Username:</label>
+			<input type="text" size="40" class="col-sm-4" placeholder="Username" name= "username" value={{username}} >
+		</div>
 	
-	<div class="form-group">
-		<label class="col-sm-4 control-label" > Password:</label>
-		<input class="col-sm-4" placeholder="Password" name = "password" type = "password" >
-	</div>
-	<div style = "color:red">{{error}}</div>
-
-	<div class="form-group">
-	<button type="submit" class="btn btn-success">Log In</button>
-	</div>
-</form>
+		
+		<div class="form-group">
+			<label class="col-sm-4 control-label" > Password:</label>
+			<input class="col-sm-4" placeholder="Password" name = "password" type = "password" >
+		</div>
+		<div style = "color:red">{{error}}</div>
+	
+		<div class="form-group">
+		<button type="submit" class="btn btn-success">Log In</button>
+		</div>
+	</form>
 	
 
 	<div align="center">	
@@ -108,7 +107,6 @@ $(document).ready(function () {
   document.body.appendChild(script);
 });
 </script>
-
 </html>
  
 
