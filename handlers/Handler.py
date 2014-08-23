@@ -9,6 +9,8 @@ import datetime
 import urllib
 import json
 import constants
+import logging
+from lib import requests
 
 #Lines for using HTML templates
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), '../templates')
@@ -139,6 +141,42 @@ class Handler(webapp2.RequestHandler):
         rideDistance -= rideDistance % .1 #truncates to 1 digit
         rideStats['rows'][0]['elements'][0]['distance']['value'] = rideDistance
         return rideStats['rows'][0]['elements'][0]
+    
+    def payForRide(self, ride, passenger):
+        driver = ride.driver
+        ride.addPassenger(passenger)
+                    
+        access_token = self.session.get('venmo_token')
+        note = "Spent this money on carpooling with college-carpool.appspot.com (Ride #%s)" % (ride.key().id())
+                    
+        venmo_email = driver.venmo_email
+        email = venmo_email if venmo_email else driver.email
+        amount = ride.cost
+        payload = {
+            "access_token":access_token,
+            "note":note,
+            "amount":amount,
+            "email":email
+        }
+        print amount, access_token, email
+        logging.error(amount)
+        url = "https://api.venmo.com/v1/payments"
+        response = requests.post(url, payload)
+        
+        # check response
+        response_dict = response.json()
+
+        sender_address = "notifications@college-carpool.appspotmail.com"
+        subject = "Have a safe upcoming drive!"
+        body = "Thank you for using college-carpool. You are driving from %s to %s. You will receive a payment confirmation soon" \
+             % (ride.start, ride.destination)
+        mail.send_mail(sender_address,[driver.email, passenger.email],subject,body)
+        ride.put()
+                    
+        request = Request.get_by_id(int(self.request.get("requestId")))
+        request.archive() #.delete()
+        
+        return True
 
 def check_login(*outer_args):
     validate = True

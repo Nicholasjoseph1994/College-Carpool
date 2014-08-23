@@ -1,6 +1,10 @@
 {% extends "base.html"%}
 
 {% block content %}
+<style>
+	div.panel { width: 50%; }
+</style>
+
 		<h2>Pending Requests</h2>
 		<div style="color:red">{{error}}</div>
 		
@@ -14,12 +18,10 @@
 				</div>
 				<div class="panel-body"><b>Passenger: {{request.passenger.username}}
 				</br>Bio: {{request.passenger.bio}}
-				</br>Message: {{request.message}}</b></div>
+				</br>Message: {{request.message}}</b>
 				<div class="btn-group">
 					<form method="post">
-						<input type="hidden" name="rideId" value={{ride.key().id()}} />
-						<input type="hidden" name="requesterId" value={{request.passenger.key().id()}} />
-						<input type="hidden" name="requestId" value={{request.key().id()}} />
+						<input type="hidden" name="pRequestId" value={{r.key().id()}} />
 						
 						<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>
 						<button type="submit" class="btn btn-danger" name="submit" value="false">Reject</button>
@@ -32,18 +34,26 @@
 		<h2>Responses</h2>
 		{% for response in responses %}
 			{% if response.type == "accepted-ride" %}
-			{% set panelType = "success" %}
-			{% set status = "Accepted!" %}
-			{% elif response.type == "rejected-ride" %}
-			{% set panelType = "danger" %}
-			{% set status = "Rejected" %}
-			{% endif %}
-				<div class = "panel panel-{{panelType}}">
+				<div class = "panel panel-success">
 					<div class="panel-heading">
 						<h3 class="panel-title">Start: {{response.ride.start}}</br>
 						 Destination: {{response.ride.destination}}</h3>
-						 <h3>{{status}}</h3>
-						 </br>Start Time: {{response.ride.startTime}}</b></div>
+						 <h3>Accepted!</h3>
+						 <h5>Start Time: {{response.ride.startTime}}</h5>
+						 <form method="post">
+							<input type="hidden" name="responseId" value={{response.key().id()}} />
+							
+							<button type="submit" class="btn btn-success" name="pay" value="true">Pay</button>
+						 </form>
+					</div>
+				</div>
+			{% elif response.type == "rejected-ride" %}
+				<div class = "panel panel-danger">
+					<div class="panel-heading">
+						<h3 class="panel-title">Start: {{response.ride.start}}</br>
+						 Destination: {{response.ride.destination}}</h3>
+						 <h3>Rejected</h3>
+						 <h5>Start Time: {{response.ride.startTime}}</h5>
 						 <form method="post">
 							<input type="hidden" name="responseId" value={{response.key().id()}} />
 							
@@ -51,8 +61,10 @@
 						 </form>
 					</div>
 				</div>
+			{% endif %}
 			<hr>
 		{% endfor %}
+		
 		<hr>
 		<h2>Payments</h2>
 		{% for notification in payments %}
@@ -71,12 +83,12 @@
 					<h1 class="panel-title" style="color:{{color}};">{{prefix}}$<script>document.write(new Number({{payment.amount}}).toFixed(2));</script></h1>
 					<h3>{{ other_actor }}</h3>
 					<h3>{{payment.status}}</h3>
+					<form method="post">
+						<input type="hidden" name="paymentId" value={{notification.key().id()}} />
+								
+						<button type="submit" class="btn btn-danger" name="removePayment" value="true">Remove</button>
+					</form>
 				</div>
-				<form method="post">
-					<input type="hidden" name="paymentId" value={{notification.key().id()}} />
-							
-					<button type="submit" class="btn btn-danger" name="removePayment" value="true">Remove</button>
-				</form>
 			</div>
 			<hr>
 		{% endfor %}
