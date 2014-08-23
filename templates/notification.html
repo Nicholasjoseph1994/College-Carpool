@@ -43,7 +43,7 @@
 						 <form method="post">
 							<input type="hidden" name="responseId" value={{response.key().id()}} />
 							
-							<button type="submit" class="btn btn-success" name="pay" value="true">Pay</button>
+							<button type="submit" class="btn btn-success" name="pay" value="true">Pay $<script>document.write(new Number({{response.ride.cost}}).toFixed(2));</script></button>
 						 </form>
 					</div>
 				</div>
