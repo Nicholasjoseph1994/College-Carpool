@@ -25,14 +25,8 @@ class PostRide(Handler):
 			if not start:
 				error = 'Please enter a starting location.'
 				res =  False
-			elif not Geocoder.geocode(start).valid_address:
-				error = 'We could not find your start location. Please check that you spelled it correctly.'
-				res = False
 			elif not destination:
 				error = 'Please enter a destination.'
-				res = False
-			elif not Geocoder.geocode(destination).valid_address:
-				error = 'We could not find your destination. Please check that you spelled it correctly.'
 				res = False
 			elif not cost or cost < 0:
 				error = 'Please enter a non-negative cost.'
@@ -70,11 +64,24 @@ class PostRide(Handler):
 		timeInput = self.request.get("time")#The plain string input
 		driverId = self.getUser()
 
+		failed = False
+		start, destination = None, None
+		try:
+			start = Geocoder.geocode(rawStart)
+		except:
+			error = 'We could not find your start location. Please check that you spelled it correctly.'
+			failed = True
+		try:
+			destination = Geocoder.geocode(rawDestination)
+		except:
+			error = 'We could not find your destination. Please check that you spelled it correctly.'
+			failed = True
+			
+		if failed:
+			self.render_front(rawStart, rawDestination, dateInput, timeInput, cost, passengerMax, error)
+			return
+			
 		if validate_inputs(rawStart, rawDestination, cost, passengerMax, dateInput, timeInput):
-			#Geocode locations
-			start = Geocoder.geocode(self.request.get("start"))
-			destination = Geocoder.geocode(self.request.get("destination"))
-
 			#Procceses date/time input
 			date = map(int, dateInput.split("/", 2))
 			timeFull = timeInput.split(" ")
