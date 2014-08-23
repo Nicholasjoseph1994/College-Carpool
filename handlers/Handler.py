@@ -112,9 +112,6 @@ class Handler(webapp2.RequestHandler):
         now = datetime.datetime.now()
         rides = [ride for ride in Ride.all() if ride.startTime < now]
         for ride in rides:
-            for request in Request.all():
-                if request.rideId == ride.key().id():
-                    request.archive()
             ride.archive()
 
     def sendActivationEmail(self, email, code):

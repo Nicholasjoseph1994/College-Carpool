@@ -78,6 +78,9 @@ class Ride(db.Model):
 	
 	def archive(self):
 		archive_entity(self, Ride_ARCHIVE)
+		
+		for request in self.ride_requests:
+			request.archive()
 
 #Table for requests
 class Request(db.Model):
