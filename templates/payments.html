@@ -1,0 +1,27 @@
+{% extends "base.html"%}
+
+{% block content %}
+	<h2>Payments</h2>
+		{% for payment in payments %}
+		{% if payment.direction == "incoming" %}
+		{% set color = "green" %}
+		{% set prefix = "+" %}
+		{% set other_actor = "From: " + payment.passenger.username %}
+		{% else %}
+		{% set color = "red" %}
+		{% set prefix = "-" %}
+		{% set other_actor = "To: " + payment.driver.username %}
+		{% endif %}
+			<div class="panel panel-default" style="width:50%;">
+				<div class="panel-heading">
+					<h1 class="panel-title" style="color:{{color}};">{{prefix}}$<script>document.write(new Number({{payment.amount}}).toFixed(2));</script></h1>
+					<h3>{{ other_actor }}</h3>
+					<h3>{{payment.status}}</h3>
+				</div>
+			</div>
+			<hr>
+		{% endfor %}
+	</body>
+</html>
+{% endblock %}
+		

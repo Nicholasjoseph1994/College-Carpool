@@ -4,7 +4,7 @@ Created on Aug 19, 2014
 @author: svatasoiu
 '''
 from Handler import Handler
-from google.appengine.api import mail
+from google.appengine.api import mail, channel
 from database import User, Payment
 import json
 
@@ -31,6 +31,10 @@ class VenmoWebhook(Handler):
                               driver=driver, passenger=passenger, apiID=data['id'], 
                               amount=data['amount'], note=data['note'])
             payment.put()
+            
+            # send channel updates to each
+            channel.send_message(str(driver.key().id()), "{}");
+            channel.send_message(str(passenger.key().id()), "{}");
         elif updateType == "payment.updated":
             status = data['status']
             payment = Payment.gql("WHERE apiID=" + data['id'])

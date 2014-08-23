@@ -12,12 +12,15 @@ class Notification(Handler):
 		user = User.get_by_id(self.getUser())
 		requests = list(user.passenger_requests)
 
-		# retrieve any response notifictaions from other users
+		# retrieve any response notifications from other users
 		responses = list(user.driver_responses)
 		
 		# retrieve pending payments
+		payments = user.getAllPaymentNotifications()
 		
-		self.render('notification.html', requests=requests, responses=responses, error=error)
+		self.render('notification.html', 
+				requests=requests, responses=responses, 
+				payments=payments, error=error)
 
 	@check_login
 	def get(self):
@@ -28,6 +31,7 @@ class Notification(Handler):
 	def post(self):
 		accepted = self.request.get("submit")
 		removeResponse = self.request.get("removeResponse")
+		removePayment = self.request.get("removePayment")
 		if accepted:
 			rideId = int(self.request.get("rideId"))
 			requesterId = int(self.request.get("requesterId"))
@@ -95,5 +99,11 @@ class Notification(Handler):
 			# remove
 			responseId = int(self.request.get("responseId"))
 			DriverResponseNotification.get_by_id(responseId).delete()
+			time.sleep(.5)
+			self.redirect("/notification")
+		elif removePayment:
+			# remove
+			paymentId = int(self.request.get("paymentId"))
+			PaymentNotification.get_by_id(paymentId).delete()
 			time.sleep(.5)
 			self.redirect("/notification")

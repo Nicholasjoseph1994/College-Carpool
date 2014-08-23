@@ -28,6 +28,26 @@ class User(db.Model):
 	
 	def archive(self):
 		archive_entity(self, User_ARCHIVE)
+		
+	def getAllPayments(self):
+		incoming_payments = list(self.incoming_payments)
+		for payment in incoming_payments:
+			payment.direction = "incoming"
+		outgoing_payments = list(self.outgoing_payments)
+		for payment in outgoing_payments:
+			payment.direction = "outgoing"
+		
+		return incoming_payments + outgoing_payments
+	
+	def getAllPaymentNotifications(self):
+		incoming_payments = list(self.incoming_payment_updates)
+		for payment in incoming_payments:
+			payment.direction = "incoming"
+		outgoing_payments = list(self.outgoing_payment_updates)
+		for payment in outgoing_payments:
+			payment.direction = "outgoing"
+		
+		return incoming_payments + outgoing_payments
 
 #Table for Rides 
 class Ride(db.Model):
@@ -81,23 +101,11 @@ class Request(db.Model):
 	def archive(self):
 		archive_entity(self, Request_ARCHIVE)
 
-#Table for requester->driver notifications
-class PassengerRequestNotification(db.Model):
-	request = db.ReferenceProperty(Request, required=True, collection_name="passenger_requests")
-	driver = db.ReferenceProperty(User, required=True, collection_name="passenger_requests")
-	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
-
-#Table for driver->requester notifications
-class DriverResponseNotification(db.Model):
-	ride = db.ReferenceProperty(Ride, required=True, collection_name="driver_responses")
-	passenger = db.ReferenceProperty(User, required=True, collection_name="driver_responses")
-	type = db.StringProperty(required=True, choices=set(["accepted-ride","rejected-ride"]))
-
 # Table for payment statuses
 class Payment(db.Model):
 	type = db.StringProperty(required=True, choices=set(["Venmo"]))
 	dateCreated = db.StringProperty(required=True)
-	status = db.StringProperty(required=True)
+	status = db.StringProperty(required=True, choices=set(["settled","cancelled","expired","failed","pending"]))
 	
 	driver = db.ReferenceProperty(User, required=True, collection_name="incoming_payments")
 	passenger = db.ReferenceProperty(User, required=True, collection_name="outgoing_payments")
@@ -106,6 +114,34 @@ class Payment(db.Model):
 	amount = db.FloatProperty(required=True)
 	note = db.StringProperty()
 	lastUpdate = db.StringProperty()
+	
+	def put(self):
+		super(Payment, self).put()
+		# add a PassengerRequestNotification to driverId
+		paymentNotification = PaymentNotification(payment=self, driver=self.driver, passenger=self.passenger, 
+												status=self.status)
+		paymentNotification.put()
+
+# Notification models
+#Table for requester->driver notifications
+class PassengerRequestNotification(db.Model):
+	request = db.ReferenceProperty(Request, required=True, collection_name="passenger_requests")
+	driver = db.ReferenceProperty(User, required=True, collection_name="passenger_requests")
+	type = db.StringProperty(required=True, choices=set(["passenger-request"]))
+
+# Table for driver->requester notifications
+class DriverResponseNotification(db.Model):
+	ride = db.ReferenceProperty(Ride, required=True, collection_name="driver_responses")
+	passenger = db.ReferenceProperty(User, required=True, collection_name="driver_responses")
+	type = db.StringProperty(required=True, choices=set(["accepted-ride","rejected-ride"]))
+
+# Table for payment notifications
+class PaymentNotification(db.Model):
+	driver = db.ReferenceProperty(User, required=True, collection_name="incoming_payment_updates")
+	passenger = db.ReferenceProperty(User, required=True, collection_name="outgoing_payment_updates")
+	payment = db.ReferenceProperty(Payment, required=True)
+	
+	status = db.StringProperty(required=True, choices=set(["settled","cancelled","expired","failed","pending"]))
 
 # archive models (should be clones of actual models)
 # perhaps, need to look at references

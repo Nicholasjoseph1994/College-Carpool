@@ -2,13 +2,17 @@
 
 {% block content %}
 <script>
-	$(document).on("click", "button.swap-change", function () {
-		$("#changePassword").toggleClass("hidden");
-		$("#otherChanges").toggleClass("hidden");
+	$(document).on("click", "#changePassBtn", function () {
+		$("#changePassword").removeClass("hidden");
+		$("#otherChanges").addClass("hidden");
+	});
+	
+	$(document).on("click", "#changeOtherBtn", function () {
+		$("#changePassword").addClass("hidden");
+		$("#otherChanges").removeClass("hidden");
 	});
 </script>
 
-<!--<link href="/static/css/admin.css" rel="stylesheet">-->
 <style>
 	#changePassword, #otherChanges {
 		text-align: center;
@@ -19,11 +23,12 @@
 	}
 </style>
 
+<div id="changeChoose" align="center" style="margin-bottom: 10px;">
+	<button id="changePassBtn" class="btn btn-default swap-change">Change Password</button>
+	<button id="changeOtherBtn" class="btn btn-default swap-change">Change Other</button>
+</div>
+
 <div id="changePassword" class="hidden">
-	<div align="center">
-		<button class="btn btn-default swap-change">Change Other Info</button>
-	</div>
-	
 	<form class="form-horizontal" method="post">
 		<div class="form-group" align="center">
 			<label class="col-sm-4 control-label">Current Password:</label>
@@ -46,9 +51,6 @@
 </div>
 
 <div id="otherChanges">
-	<div align="center">
-		<button class="btn btn-default swap-change">Change Password</button>
-	</div>
 	<form class="form-horizontal" method="post">
 		<div class="form-group" align="center">
 			<label class="col-sm-4 control-label">Change Email:</label>

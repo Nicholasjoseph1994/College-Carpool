@@ -3,7 +3,7 @@
 {% block content %}
 		<h2>Pending Requests</h2>
 		<div style="color:red">{{error}}</div>
-		<hr>
+		
 		{% for r in requests %}
 		{% set request = r.request %}
 		{% set ride = request.ride %}
@@ -28,7 +28,7 @@
 			</div>
 			<hr>
 		{% endfor %}
-		
+		<hr>
 		<h2>Responses</h2>
 		{% for response in responses %}
 			{% if response.type == "accepted-ride" %}
@@ -51,6 +51,33 @@
 						 </form>
 					</div>
 				</div>
+			<hr>
+		{% endfor %}
+		<hr>
+		<h2>Payments</h2>
+		{% for notification in payments %}
+		{% set payment = notification.payment %}
+		{% if payment.direction == "incoming" %}
+		{% set color = "green" %}
+		{% set prefix = "+" %}
+		{% set other_actor = "From: " + notification.passenger.username %}
+		{% else %}
+		{% set color = "red" %}
+		{% set prefix = "-" %}
+		{% set other_actor = "To: " + notification.driver.username %}
+		{% endif %}
+			<div class="panel panel-default" style="width:50%;">
+				<div class="panel-heading">
+					<h1 class="panel-title" style="color:{{color}};">{{prefix}}$<script>document.write(new Number({{payment.amount}}).toFixed(2));</script></h1>
+					<h3>{{ other_actor }}</h3>
+					<h3>{{payment.status}}</h3>
+				</div>
+				<form method="post">
+					<input type="hidden" name="paymentId" value={{notification.key().id()}} />
+							
+					<button type="submit" class="btn btn-danger" name="removePayment" value="true">Remove</button>
+				</form>
+			</div>
 			<hr>
 		{% endfor %}
 	</body>
