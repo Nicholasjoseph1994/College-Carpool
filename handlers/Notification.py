@@ -81,5 +81,5 @@ class Notification(Handler):
 			paymentId = int(self.request.get("paymentId"))
 			PaymentNotification.get_by_id(paymentId).delete()
 			
-		time.sleep(.5)
+		time.sleep(.25)
 		self.redirect("/notification")

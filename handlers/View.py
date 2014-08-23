@@ -5,7 +5,6 @@ from database import User, Ride
 class View(Handler):
 	@check_login
 	def get(self):
-		#Initialization
 		self.deleteOldRides()
 		
 		userID = self.getUser()

@@ -93,24 +93,25 @@ class Handler(webapp2.RequestHandler):
     def checkLogin(self, validate=True):
         """Checks if user is logged in and redirects to login page if not."""
         userID = self.getUser()
+        next_url = self.request.path
         if userID:
             is_user_activated = self.request.cookies.get('is_user_activated')
             
             if not userID:
-                self.redirect('/login')
+                self.redirect('/login?next=' + next_url)
                 return False
             elif validate and is_user_activated != "True":
                 self.redirect('/verify')
                 return False
         else:
-            self.redirect('/login')
+            self.redirect('/login?next=' + next_url)
             return False
         return True
 
     def deleteOldRides(self):
         """Deletes past rides."""
         now = datetime.datetime.now()
-        rides = [ride for ride in Ride.all() if ride.startTime < now]
+        rides = Ride.all().filter("startTime < ", now) #[ride for ride in Ride.all() if ride.startTime < now]
         for ride in rides:
             ride.archive()
 
@@ -179,6 +180,7 @@ def check_login(*outer_args):
     validate = True
     def decorator(view_func):
         def wrapper(self, *args, **kwargs):
+            # get next url parameter
             if not self.checkLogin(validate=validate):
                 return
             else:

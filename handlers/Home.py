@@ -7,8 +7,7 @@ class Home(Handler):
     @check_login
     def get(self):
         self.deleteOldRides()
-        time.sleep(.25)
-
+        
         #Rides
         user = User.get_by_id(self.getUser())
         rides = user.rides
@@ -26,6 +25,6 @@ class Home(Handler):
     def post(self):
         """This is for if they are cancelling a ride."""
         ride = Ride.get_by_id(int(self.request.get("rideId")))
-        ride.delete()
+        ride.archive()
         time.sleep(.25)
         self.redirect('home')

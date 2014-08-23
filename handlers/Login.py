@@ -27,7 +27,10 @@ class Login(Handler):
                 cookie_val = validation.make_secure_val(str(user_id))
                 self.response.headers.add_header('Set-Cookie',str('user=%s; Path=/' % cookie_val))
                 self.response.headers.add_header('Set-Cookie', str('is_user_activated=%s; Path=/' % str(user.activated)))
-                self.redirect("home")
+                
+                next_url = self.request.get('next')
+                self.redirect(next_url if next_url else '/home')
+#                 self.redirect("home")
             else:
                 self.write_form(error="Invalid Password", username=username)
         else:

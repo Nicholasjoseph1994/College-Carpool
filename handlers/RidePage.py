@@ -23,5 +23,5 @@ class RidePage(Handler):
 		
 		print "Sending message to " + str(driverId)
 		channel.send_message(str(driverId), "{}");
-		time.sleep(.5)
+# 		time.sleep(.5)
 		self.redirect("/home")
