@@ -23,10 +23,11 @@ class Login(Handler):
             #checks if the username and password are valid
             if validation.valid_pw(user.username, password, user.passHash):
                 user_id = user.key().id()
+                
                 #Makes and adds the cookie
                 self.response.headers['Content-Type'] = 'text/plain'
-                cookie_val = validation.make_secure_val(str(user_id))
-                self.response.headers.add_header('Set-Cookie',str('user=%s; Path=/' % cookie_val))
+                user_id_val = validation.make_secure_val(str(user_id))
+                self.response.headers.add_header('Set-Cookie',str('user=%s; Path=/' % user_id_val))
                 self.response.headers.add_header('Set-Cookie', str('is_user_activated=%s; Path=/' % str(user.activated)))
                 
                 next_url = self.request.get('next')

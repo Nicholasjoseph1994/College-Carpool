@@ -11,7 +11,7 @@ class Home(Handler):
         #Rides
         user = User.get_by_id(self.getUser())
         rides = user.rides
-
+        
         #note: sort this later
         for ride in rides:
             driver = ride.driver
@@ -26,5 +26,5 @@ class Home(Handler):
         """This is for if they are cancelling a ride."""
         ride = Ride.get_by_id(int(self.request.get("rideId")))
         ride.archive()
-        time.sleep(.25)
+        time.sleep(0.25)
         self.redirect('home')

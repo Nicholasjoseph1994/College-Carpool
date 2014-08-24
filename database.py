@@ -16,16 +16,19 @@ class User(db.Model):
 	rideIds = db.ListProperty(int)
 	
 	def addRide(self, ride):
-		self.rideIds.append(ride.key().id())
+		self.rideIds.append(int(ride.key().id()))
 		
 	def removeRide(self, ride):
-		rideID = ride.key().id()
-		self.rideIds = [r for r in self.rideIds if r != rideID]
-		
+		try:
+			self.rideIds.remove(ride.key().id())
+		except:
+			pass
+	
 	@property
 	def rides(self):
-		return [Ride.get_by_id(ride) for ride in self.rideIds]
-	
+		ret = [Ride.get_by_id(ride) for ride in self.rideIds]
+		return [r for r in ret if r is not None]
+
 	def archive(self):
 		archive_entity(self, User_ARCHIVE)
 		
@@ -71,6 +74,12 @@ class Ride(db.Model):
 	def removePassenger(self, passenger):
 		passID = passenger.key().id()
 		self.passIds = [p for p in self.passIds if p != passID]
+	
+	def delete(self):
+		# need to get associated users and delete from there
+		self.driver.removeRide(self)
+		self.driver.put()
+		super(Ride, self).delete()
 	
 	@property
 	def passengers(self):

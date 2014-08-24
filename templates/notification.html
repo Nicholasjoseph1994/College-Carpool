@@ -17,15 +17,16 @@
 					 Destination: {{ride.destination}}</h3>
 				</div>
 				<div class="panel-body"><b>Passenger: {{request.passenger.username}}
-				</br>Bio: {{request.passenger.bio}}
-				</br>Message: {{request.message}}</b>
-				<div class="btn-group">
-					<form method="post">
-						<input type="hidden" name="pRequestId" value={{r.key().id()}} />
-						
-						<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>
-						<button type="submit" class="btn btn-danger" name="submit" value="false">Reject</button>
-					</form>
+					</br>Bio: {{request.passenger.bio}}
+					</br>Message: {{request.message}}</b>
+					<div class="btn-group">
+						<form method="post">
+							<input type="hidden" name="pRequestId" value={{r.key().id()}} />
+							
+							<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>
+							<button type="submit" class="btn btn-danger" name="submit" value="false">Reject</button>
+						</form>
+					</div>
 				</div>
 			</div>
 			<hr>

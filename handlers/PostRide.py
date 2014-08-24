@@ -118,6 +118,5 @@ class PostRide(Handler):
 				driver.addRide(ride)
 				driver.put()
 				
-
 				time.sleep(.25) #so that it has time to enter the ride and it appears on home page
 				self.redirect("home")
