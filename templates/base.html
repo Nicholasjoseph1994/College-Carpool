@@ -50,12 +50,18 @@
 				{% endif %}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="admin">Hi, {{username}}</a></li>
-				<li><a href="logout">Log Out</a></li>
+				<li><a href="/admin">Hi, {{username}}</a></li>
+				<li><a href="/logout">Log Out</a></li>
 			</ul>
 		</nav>
 		
 		<script>
+			{% if username == "guest" %}
+			$(document).ready(function () {
+				$("button[type='submit']").prop("disabled", true);
+			});
+			{% endif %}
+		
 			var nextURL = '?next=' + window.location.pathname;
 			$("#venmologout").attr("href", '/venmo-logout' + nextURL);
 			

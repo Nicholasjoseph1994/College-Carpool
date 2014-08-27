@@ -22,4 +22,4 @@ class View(Handler):
 		rides = sorted(rides, key=lambda x:x.startTime)
 		self.render("rideSearch.html", rides=rides)
 	def post(self):
-		self.redirect('/'+self.request.get('rideId'))
+		self.redirect('/ride/'+self.request.get('rideId'))

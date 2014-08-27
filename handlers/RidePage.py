@@ -15,9 +15,18 @@ class RidePage(Handler):
 		
 	def post(self, rideId):
 		driverId=int(self.request.get('driverId'))
+		passenger = User.get_by_id(self.getUser())
+		ride=Ride.get_by_id(int(rideId))
+		
+		if passenger.permission == "guest":
+			ride.driverName = ride.driver.username
+			ride.seatsLeft = ride.passengerMax - len(ride.passIds)
+			self.render("ride.html", ride=ride, error="Permission Denied")
+			return
+		
 		request = Request(driver=User.get_by_id(driverId), 
-						ride=Ride.get_by_id(int(rideId)), 
-						passenger=User.get_by_id(self.getUser()), 
+						ride=ride, 
+						passenger=passenger, 
 						message=self.request.get('message'))
 		request.put()
 		

@@ -104,7 +104,9 @@ function calcRoute() {
   {% endif %}
 </table>
 <hr>
-
+{% if error %}
+<div align="center" style="margin-top: 20px; color: red">{{ error }}</div>
+{% endif %}
 </body>
 
 </html>

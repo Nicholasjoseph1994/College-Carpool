@@ -2,6 +2,14 @@
 
 {% block content %}
 		
+<script> 
+{% if username == "guest" %}
+	$(document).ready(function () {
+		$("button[type='submit']").prop("disabled", false);
+	});
+{% endif %}
+</script>
+		
 <table>
 	<col width="90%"/>
 	<tr>

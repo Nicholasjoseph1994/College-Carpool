@@ -17,6 +17,10 @@ class Login(Handler):
         username = self.request.get("username")
         password = self.request.get("password")
 
+        if "guestLogin" in self.request.POST:
+            username = "guest"
+            password = "guest"
+
         user = db.GqlQuery('SELECT * FROM User WHERE username=:username',
                            username=username).get()
         if user:

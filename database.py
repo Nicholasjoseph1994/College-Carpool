@@ -12,6 +12,7 @@ class User(db.Model):
 	activationCode = db.StringProperty(required=True)
 	activated = db.BooleanProperty(default=False)
 	recoveryCode = db.StringProperty()
+	permission = db.StringProperty(default="all", choices=["all", "guest"])
 	
 	rideIds = db.ListProperty(int)
 	
@@ -91,6 +92,9 @@ class Ride(db.Model):
 		
 		for request in self.ride_requests:
 			request.archive()
+		
+		for response in self.driver_responses:
+			response.delete()
 
 #Table for requests
 class Request(db.Model):

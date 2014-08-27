@@ -2,6 +2,12 @@
 
 {% block content %}
 <script>
+	{% if user.permission == "guest" %}
+		$(document).ready(function () {
+			$("input, textarea").prop("disabled", true);
+		});
+	{% endif %}
+
 	$(document).on("click", "#changePassBtn", function () {
 		$("#changePassword").removeClass("hidden");
 		$("#otherChanges").addClass("hidden");
