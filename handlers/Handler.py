@@ -141,7 +141,6 @@ class Handler(webapp2.RequestHandler):
     
     def payForRide(self, ride, passenger):
         driver = ride.driver
-        ride.addPassenger(passenger)
                     
         access_token = self.session.get('venmo_token')
         note = "Spent this money on carpooling with college-carpool.appspot.com (Ride #%s)" % (ride.key().id())
@@ -163,6 +162,9 @@ class Handler(webapp2.RequestHandler):
         # check response
         response_dict = response.json()
 
+        ride.addPassenger(passenger)
+        passenger.addRide(ride)
+        
         sender_address = "notifications@college-carpool.appspotmail.com"
         subject = "Have a safe upcoming drive!"
         body = "Thank you for using college-carpool. You are driving from %s to %s. You will receive a payment confirmation soon" \

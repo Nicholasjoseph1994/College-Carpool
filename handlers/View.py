@@ -10,15 +10,10 @@ class View(Handler):
 		userID = self.getUser()
 		user = User.get_by_id(userID)
 
+		rideIds = user.rideIds
 		#Finding the rides user is not in
 		rides = list(Ride.gql("ORDER BY startTime DESC LIMIT 10"))
-		notInRide = lambda x: x.driver.key().id() != userID and str(userID) not in x.passIds
-		rides = filter(notInRide, rides)
-
-		#Finds the requests the user has made
-		requests = list(user.requests_passenger)
-		requests = [x.ride.key().id() for x in requests]
-		rides = filter(lambda x: x.key().id() not in requests, rides)
+		rides = [r for r in rides if r.key().id() not in rideIds]
 		
 		for ride in rides:
 			ride.driverName = ride.driver.username

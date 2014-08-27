@@ -30,7 +30,8 @@ class User(db.Model):
 		return [r for r in ret if r is not None]
 
 	def archive(self):
-		archive_entity(self, User_ARCHIVE)
+		self.activated = False
+# 		archive_entity(self, User_ARCHIVE)
 		
 	@property
 	def payments(self):
