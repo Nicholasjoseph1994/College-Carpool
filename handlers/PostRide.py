@@ -106,11 +106,6 @@ class PostRide(Handler):
 			else:
 				driver = User.get_by_id(driverId)
 				
-				if driver.permission == "guest":
-					self.render_front(start.formatted_address, destination.formatted_address, dateInput,
-						timeInput, cost, passengerMax, "Permission Denied")
-					return
-				
 				ride = Ride(start=start.formatted_address,
 						destination=destination.formatted_address,
 						startTime=startTime,
