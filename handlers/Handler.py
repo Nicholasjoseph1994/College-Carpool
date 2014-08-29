@@ -171,10 +171,8 @@ class Handler(webapp2.RequestHandler):
              % (ride.start, ride.destination)
         mail.send_mail(sender_address,[driver.email, passenger.email],subject,body)
         ride.put()
+        passenger.put()
                     
-        request = Request.get_by_id(int(self.request.get("requestId")))
-        request.archive() #.delete()
-        
         return True
 
 def check_login(*outer_args):

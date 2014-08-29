@@ -41,7 +41,7 @@ class Notification(Handler):
 			passenger = request.passenger
 			
 			if accepted == 'true':
-				pRequestNot.delete()
+				request.archive()
 				
 				# create an accepted-ride DriverResponseNotification
 				notification = DriverResponseNotification(ride=ride, passenger=passenger, type="accepted-ride")
