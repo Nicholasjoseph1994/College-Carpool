@@ -1,20 +1,30 @@
 from google.appengine.ext import db
 from google.appengine.api import channel
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import time
 
 class RidePage(Handler):
+	@check_login
 	def get(self, rideId):
-		self.checkLogin()
 		ride = Ride.get_by_id(int(rideId))
-		ride.driverName = User.get_by_id(ride.driverId).username
+		ride.driverName = ride.driver.username
+		ride.seatsLeft = ride.passengerMax - len(ride.passIds)
+		
 		self.render("ride.html", ride=ride)
+		
 	def post(self, rideId):
 		driverId=int(self.request.get('driverId'))
-		request = Request(driverId=driverId, rideId=int(self.request.get('rideId')), requesterId=self.getUser(), message=self.request.get('message'))
+		passenger = User.get_by_id(self.getUser())
+		ride=Ride.get_by_id(int(rideId))
+		
+		request = Request(driver=User.get_by_id(driverId), 
+						ride=ride, 
+						passenger=passenger, 
+						message=self.request.get('message'))
 		request.put()
-		#print "Sending message to " + str(driverId)
+		
+		print "Sending message to " + str(driverId)
 		channel.send_message(str(driverId), "{}");
-		time.sleep(.5)
+# 		time.sleep(.5)
 		self.redirect("/home")

@@ -27,11 +27,16 @@
 				</tr>
 				<tr>
 					<td>
-						<div class="flex-item">Passengers: 
-						{% for passenger in ride.passengers %}
-						</br> 
-						{{passenger.username}} ({{passenger.email}})
-						{% endfor %}	
+						<div class="flex-item">
+						{% if ride.passengers|length == 0 %} 
+							No Passengers
+						{% else %}
+							Passengers:
+							{% for passenger in ride.passengers %}
+								</br> 
+								{{passenger.username}} ({{passenger.email}})
+							{% endfor %}	
+						{% endif %}
 						</div>	
 					</td>
 					<td>
@@ -57,34 +62,35 @@
 		<hr>
         <h2>Pending Requests</h2>
 		<hr>
-		{%
-		else %}
+		{% else %}
 		<h2> No Pending Requests </h2>
-		
 		{%  endif %}
+		
 		{% for request in requests %}
+		{% set ride = request.ride %}
+		{% set driver = ride.driver %}
 		<table width="50%" style="background: rgba(250, 250, 0, 0.3); border-radius: 1em;">
 			<col width="50%">		
 			<col width="50%">		
 			<tr>
 				<td>
 					<div class="flex2-item" style="background: rgba(128,128,0,0.0);">
-						<h3>From {{request.ride.start}} to {{request.ride.destination}}</h3>
+						<h3>From {{ride.start}} to {{ride.destination}}</h3>
 					</div>
 				</td>
 			</tr>
 			<tr>
 				<tr>
 					<td>
-						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);"> Driver: {{request.ride.driverName}} ({{request.ride.driverEmail}})</div>
+						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);"> Driver: {{driver.username}} ({{driver.email}})</div>
 					</td>
 					<td>
-						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);">Start Time: {{request.ride.startTime}}</div>
+						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);">Start Time: {{ride.startTime}}</div>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);">Cost: $<script>document.write(new Number({{request.ride.cost}}).toFixed(2));</script>
+						<div class="flex-item" style="background:rgba(128,128,0,0.3);color:rgb(0,0,0);">Cost: $<script>document.write(new Number({{ride.cost}}).toFixed(2));</script>
 						</div>
 					</td>
 				</tr>
@@ -92,8 +98,6 @@
 			<hr>
 		</table>
 		{% endfor %}
-		<script src="https://code.jquery.com/jquery.js"></script>
-		<script src="/static/js/bootstrap.min.js"></script>
 	</body>
 </html>
 {% endblock %}

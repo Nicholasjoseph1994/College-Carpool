@@ -1,44 +1,30 @@
 from google.appengine.ext import db
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import time
 
 class Home(Handler):
-	def render_front(self, rides, requests):
-		self.render("home.html", rides=rides, requests=requests)
+    @check_login
+    def get(self):
+        self.deleteOldRides()
+        
+        #Rides
+        user = User.get_by_id(self.getUser())
+        rides = user.rides
+        
+        #note: sort this later
+        for ride in rides:
+            driver = ride.driver
+            ride.driverName = driver.username
+            ride.driverEmail = driver.email
+                
+        #Requests
+        requests = list(user.requests_passenger)
+        self.render("home.html", rides=rides, requests=requests)
 
-	def get(self):
-		self.deleteOldRides()
-		time.sleep(.25)
-		self.checkLogin()
-
-		#Rides
-		rides = list(Ride.all())
-		userId = self.getUser()
-		#note: sort this later
-		if len(rides)>0:
-			rides = filter(lambda x: x.driverId == userId or (x.passIds and str(userId) in x.passIds), rides)
-		for ride in rides:
-			driver = User.get_by_id(ride.driverId)
-			driverName = driver.username
-			driverEmail = driver.email
-			ride.driverName = driverName
-			ride.driverEmail = driverEmail
-			if ride.passIds:
-				ride.passengers = map(User.get_by_id,map(int,ride.passIds.split(",")))
-		#Requests
-		requests = list(db.GqlQuery('SELECT * FROM Request WHERE requesterId=:userId', userId = userId))
-		for request in requests:
-			ride = Ride.get_by_id(request.rideId)
-			ride.driverName = User.get_by_id(ride.driverId).username
-			ride.driverEmail = User.get_by_id(ride.driverId).email
-			request.ride = ride
-		self.render_front(rides, requests)
-
-	#This is for if they are cancelling a ride
-	def post(self):
-		rideId = int(self.request.get("rideId"))
-		ride = Ride.get_by_id(rideId)
-		ride.delete()
-		time.sleep(.25)
-		self.redirect('home')
+    def post(self):
+        """This is for if they are cancelling a ride."""
+        ride = Ride.get_by_id(int(self.request.get("rideId")))
+        ride.archive()
+        time.sleep(0.25)
+        self.redirect('home')

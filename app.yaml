@@ -5,6 +5,14 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /static/css/bootstrap.min.css
+  static_dir: static/css
+  expiration: "30m"
+
+- url: /static/js/jquery-1.11.1.min.js
+  static_dir: static/js
+  expiration: "30m"
+
 - url: /static
   static_dir: static
 
@@ -17,6 +25,14 @@ handlers:
   secure: always
 
 - url: /verify
+  script: carpool.application
+  secure: always
+
+- url: /venmo-webhook
+  script: carpool.application
+  secure: always
+
+- url: /recover
   script: carpool.application
   secure: always
 

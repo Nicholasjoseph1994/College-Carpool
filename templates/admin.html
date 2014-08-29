@@ -1,0 +1,88 @@
+{% extends "base.html"%}
+
+{% block content %}
+<script>
+	{% if user.permission == "guest" %}
+		$(document).ready(function () {
+			$("input, textarea").prop("disabled", true);
+		});
+	{% endif %}
+
+	$(document).on("click", "#changePassBtn", function () {
+		$("#changePassword").removeClass("hidden");
+		$("#otherChanges").addClass("hidden");
+	});
+	
+	$(document).on("click", "#changeOtherBtn", function () {
+		$("#changePassword").addClass("hidden");
+		$("#otherChanges").removeClass("hidden");
+	});
+</script>
+
+<style>
+	#changePassword, #otherChanges {
+		text-align: center;
+	}
+	
+	button.swap-change {
+		margin-bottom: 10px;
+	}
+</style>
+
+<div id="changeChoose" align="center" style="margin-bottom: 10px;">
+	<button id="changePassBtn" class="btn btn-default swap-change">Change Password</button>
+	<button id="changeOtherBtn" class="btn btn-default swap-change">Change Other</button>
+</div>
+
+<div id="changePassword" class="hidden">
+	<form class="form-horizontal" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Current Password:</label>
+			<input class="col-sm-4" type="password" placeholder="Current Password" name="currentPassword">
+		</div>
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">New Password:</label>
+			<input class="col-sm-4" type="password" placeholder="New Password" name="newPassword">
+		</div>
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Verify New Password:</label>
+			<input class="col-sm-4" type="password" placeholder="Verify New Password" name="verifyNewPassword">
+		</div>
+		<!--<label>Current Password: <input type="password" name="currentPassword" /></label>
+		<label>New Password: <input type="password" name="newPassword" /></label>
+		<label>Verify New Password: <input type="password" name="verifyNewPassword" /></label>-->
+		
+		<button type="submit" class="btn btn-primary" name="updatePassword">Update Password</button>
+	</form>
+</div>
+
+<div id="otherChanges">
+	<form class="form-horizontal" method="post">
+		<div class="form-group" align="center">
+			<label class="col-sm-4 control-label">Change Email:</label>
+			<input class="col-sm-4" type="email" placeholder="Email Address (@brown.edu)" name="email" value={{user.email}}>
+			<div style="color: red">{{emailError}}</div>
+		</div>
+		
+		<div class="form-group" >
+			<label class="col-sm-4 control-label">Change Venmo Email:</label>
+			<input class="col-sm-4" type="email" placeholder="Venmo Email Address" name="venmo_email" value={{user.venmo_email}}>
+			<div style="color: red">{{venmoEmailError}}</div>
+		</div>
+	
+		<div class="form-group" >
+			<label class="col-sm-4 control-label">Biography:</label>
+			<textarea name="bio" placeholder="Put some information about yourself here." class="col-sm-4" rows="4" cols="50">{{user.bio}}</textarea>
+		</div>
+			
+		<button type="submit" class="btn btn-primary" name="otherChanges">Save Changes</button>
+	</form>
+</div>
+
+<div align="center" style="margin-top: 20px; color: green">{{ updateSuccess }}</div>	
+<div align="center" style="margin-top: 20px; color: red">{{ updateError }}</div>	
+
+</body>
+</html>
+
+{% endblock %}

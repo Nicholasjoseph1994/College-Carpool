@@ -1,11 +1,8 @@
-from google.appengine.ext import db
-from Handler import Handler
+from Handler import Handler, check_login
 from database import *
 import datetime
 import time
 import re
-import json
-import urllib
 from pygeocoder import Geocoder
 
 class PostRide(Handler):
@@ -13,8 +10,8 @@ class PostRide(Handler):
 	def render_front(self, start="", destination="", startDate="", startTime="", cost="", passengerMax="", error=""):
 		self.render("postRide.html", start=start, destination=destination, startDate=startDate, startTime=startTime, cost=cost, passengerMax=passengerMax, error=error)
 
+	@check_login
 	def get(self):
-		self.checkLogin()
 		self.render_front()
 
 	#Posts a new ride for people to join
@@ -28,14 +25,8 @@ class PostRide(Handler):
 			if not start:
 				error = 'Please enter a starting location.'
 				res =  False
-			elif not Geocoder.geocode(start).valid_address:
-				error = 'We could not find your start location. Please check that you spelled it correctly.'
-				res = False
 			elif not destination:
 				error = 'Please enter a destination.'
-				res = False
-			elif not Geocoder.geocode(destination).valid_address:
-				error = 'We could not find your destination. Please check that you spelled it correctly.'
 				res = False
 			elif not cost or cost < 0:
 				error = 'Please enter a non-negative cost.'
@@ -73,11 +64,24 @@ class PostRide(Handler):
 		timeInput = self.request.get("time")#The plain string input
 		driverId = self.getUser()
 
+		failed = False
+		start, destination = None, None
+		try:
+			start = Geocoder.geocode(rawStart)
+		except:
+			error = 'We could not find your start location. Please check that you spelled it correctly.'
+			failed = True
+		try:
+			destination = Geocoder.geocode(rawDestination)
+		except:
+			error = 'We could not find your destination. Please check that you spelled it correctly.'
+			failed = True
+			
+		if failed:
+			self.render_front(rawStart, rawDestination, dateInput, timeInput, cost, passengerMax, error)
+			return
+			
 		if validate_inputs(rawStart, rawDestination, cost, passengerMax, dateInput, timeInput):
-			#Geocode locations
-			start = Geocoder.geocode(self.request.get("start"))
-			destination = Geocoder.geocode(self.request.get("destination"))
-
 			#Procceses date/time input
 			date = map(int, dateInput.split("/", 2))
 			timeFull = timeInput.split(" ")
@@ -100,16 +104,20 @@ class PostRide(Handler):
 				self.render_front(start.formatted_address, destination.formatted_address,
 						'', '', cost, passengerMax, error)
 			else:
+				driver = User.get_by_id(driverId)
+				
 				ride = Ride(start=start.formatted_address,
 						destination=destination.formatted_address,
 						startTime=startTime,
 						cost=float(cost),
 						passengerMax=passengerMax,
-						driverId=driverId,
-						passIds='',
+						driver=driver,
 						driveTime=float(rideDuration),
 						driveDistance=float(rideDistance))
 				ride.put()
-
+				
+				driver.addRide(ride)
+				driver.put()
+				
 				time.sleep(.25) #so that it has time to enter the ride and it appears on home page
 				self.redirect("home")

@@ -16,6 +16,11 @@ from oauthAuthentication import oauthAuthentication
 from AllRides import AllRides
 from Verify import Verify
 from VenmoLogOut import VenmoLogOut
+from VenmoWebhook import VenmoWebhook
+from AdminPage import AdminPage
+from PasswordRecovery import PasswordRecovery
+from UpdateVenmo import UpdateVenmo
+from Payments import Payments
 import constants
 
 config = {}
@@ -31,11 +36,17 @@ application = webapp2.WSGIApplication([ ('/', MainPage),
 										('/logout', Logout),
 										('/view', View),
 										('/notification', Notification),
-										('/(\d+)', RidePage),
+										('/ride/(\d+)', RidePage),
 										('/oauth-authorized', oauthAuthentication),
 										('/allrides', AllRides),
 										('/verify', Verify),
-                                        ('/venmo-logout', VenmoLogOut)
+                                        ('/venmo-logout', VenmoLogOut),
+                                        ('/venmo-webhook', VenmoWebhook),
+                                        ('/admin', AdminPage),
+                                        ('/recover', PasswordRecovery),
+                                        ('/update-venmo', UpdateVenmo),
+                                        ('/payments', Payments)
 										], config=config,
 										debug = True)
+
 

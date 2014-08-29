@@ -2,23 +2,24 @@ from google.appengine.ext import db
 from Handler import Handler
 from database import User
 from pygeocoder import Geocoder
+from Handler import Handler, check_login
+from database import User, Ride
 
 class View(Handler):
+	@check_login
 	def get(self):
-		#Initialization
 		self.deleteOldRides()
-		self.checkLogin()
 
+		userID = self.getUser()
+		user = User.get_by_id(userID)
+
+		rideIds = user.rideIds
 		#Finding the rides user is not in
-		rides = list(db.GqlQuery("SELECT * FROM Ride ORDER BY startTime DESC", userId=self.getUser()))
-		notInRide = lambda x: x.driverId!=self.getUser() and str(self.getUser()) not in x.passIds
-		rides = filter(notInRide, rides)
+		rides = list(Ride.gql("ORDER BY startTime DESC LIMIT 10"))
+		rides = [r for r in rides if r.key().id() not in rideIds]
 
-		#Finds the requests the user has made
-		requests = list(db.GqlQuery("SELECT * FROM Request WHERE requesterId = :userId", userId=self.getUser()))
-		requests = [x.rideId for x in requests]
-		rides = [x for x in rides if x.key().id() not in requests]
 		for ride in rides:
+
 			ride.driverName = User.get_by_id(ride.driverId).username
 
 		sortType = self.request.get('sort', default_value='time')
@@ -50,3 +51,9 @@ class View(Handler):
 			self.redirect('/view?sort='+self.request.get('searchOptions')
 					+ '&start=' + self.request.get('start')
 					+ '&dest=' + self.request.get('dest'))
+			ride.driverName = ride.driver.username
+			ride.seatsLeft = ride.passengerMax - len(ride.passIds)
+		rides = sorted(rides, key=lambda x:x.startTime)
+		self.render("rideSearch.html", rides=rides)
+	def post(self):
+		self.redirect('/ride/'+self.request.get('rideId'))

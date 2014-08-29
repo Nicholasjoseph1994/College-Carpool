@@ -1,59 +1,60 @@
 {% extends "base.html"%}
 
 {% block content %}
+<style>
+	div.panel { width: 50%; }
+</style>
+
 		<h2>Pending Requests</h2>
 		<div style="color:red">{{error}}</div>
-		<hr>
-		{% for request in requests %}
+		
+		{% for r in requests %}
+		{% set request = r.request %}
+		{% set ride = request.ride %}
 			<div class = "panel panel-warning">
 				<div class="panel-heading">
-					<h3 class="panel-title">Start: {{request.ride.start}}</br>
-					 Destination: {{request.ride.destination}}</h3>
+					<h3 class="panel-title">Start: {{ride.start}}</br>
+					 Destination: {{ride.destination}}</h3>
 				</div>
-				<div class="panel-body"><b>Passenger: {{request.requester.username}}
-				</br>Bio: {{request.requester.bio}}
-				</br>Message: {{request.message}}</b></div>
-				<div class="btn-group">
-					<form method="post">
-						<input type="hidden" name="rideId" value={{request.rideId}} />
-						<input type="hidden" name="requesterId" value={{request.requesterId}} />
-						<input type="hidden" name="requestId" value={{request.key().id()}} />
-						
-						<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>
-						<button type="submit" class="btn btn-danger" name="submit" value="false">Reject</button>
-					</form>
+				<div class="panel-body"><b>Passenger: {{request.passenger.username}}
+					</br>Bio: {{request.passenger.bio}}
+					</br>Message: {{request.message}}</b>
+					<div class="btn-group">
+						<form method="post">
+							<input type="hidden" name="pRequestId" value={{r.key().id()}} />
+							
+							<button type="submit" class="btn btn-primary" name="submit" value="true">Accept</button>
+							<button type="submit" class="btn btn-danger" name="submit" value="false">Reject</button>
+						</form>
+					</div>
 				</div>
 			</div>
 			<hr>
 		{% endfor %}
-		
+		<hr>
 		<h2>Responses</h2>
 		{% for response in responses %}
-			{% if response.response == "accepted-ride" %}
-			{% set panelType = "success" %}
-			{% set status = "Accepted!" %}
-				<div class = "panel panel-{{panelType}}">
+			{% if response.type == "accepted-ride" %}
+				<div class = "panel panel-success">
 					<div class="panel-heading">
 						<h3 class="panel-title">Start: {{response.ride.start}}</br>
 						 Destination: {{response.ride.destination}}</h3>
-						 <h3>{{status}}</h3>
-						 </br>Start Time: {{response.ride.startTime}}</b></div>
+						 <h3>Accepted!</h3>
+						 <h5>Start Time: {{response.ride.startTime}}</h5>
 						 <form method="post">
 							<input type="hidden" name="responseId" value={{response.key().id()}} />
 							
-							<button type="submit" class="btn btn-danger" name="removeResponse" value="true">Remove</button>
+							<button type="submit" class="btn btn-success" name="pay" value="true">Pay $<script>document.write(new Number({{response.ride.cost}}).toFixed(2));</script></button>
 						 </form>
 					</div>
 				</div>
-			{% elif response.response == "rejected-ride" %}
-			{% set panelType = "danger" %}
-			{% set status = "Rejected" %}
-				<div class = "panel panel-{{panelType}}">
+			{% elif response.type == "rejected-ride" %}
+				<div class = "panel panel-danger">
 					<div class="panel-heading">
 						<h3 class="panel-title">Start: {{response.ride.start}}</br>
 						 Destination: {{response.ride.destination}}</h3>
-						 <h3>{{status}}</h3>
-						 </br>Start Time: {{response.ride.startTime}}</b></div>
+						 <h3>Rejected</h3>
+						 <h5>Start Time: {{response.ride.startTime}}</h5>
 						 <form method="post">
 							<input type="hidden" name="responseId" value={{response.key().id()}} />
 							
@@ -64,7 +65,34 @@
 			{% endif %}
 			<hr>
 		{% endfor %}
-		<script src="/static/js/bootstrap.min.js"></script>
+		
+		<hr>
+		<h2>Payments</h2>
+		{% for notification in payments %}
+		{% set payment = notification.payment %}
+		{% if payment.direction == "incoming" %}
+		{% set color = "green" %}
+		{% set prefix = "+" %}
+		{% set other_actor = "From: " + notification.passenger.username %}
+		{% else %}
+		{% set color = "red" %}
+		{% set prefix = "-" %}
+		{% set other_actor = "To: " + notification.driver.username %}
+		{% endif %}
+			<div class="panel panel-default" style="width:50%;">
+				<div class="panel-heading">
+					<h1 class="panel-title" style="color:{{color}};">{{prefix}}$<script>document.write(new Number({{payment.amount}}).toFixed(2));</script></h1>
+					<h3>{{ other_actor }}</h3>
+					<h3>{{payment.status}}</h3>
+					<form method="post">
+						<input type="hidden" name="paymentId" value={{notification.key().id()}} />
+								
+						<button type="submit" class="btn btn-danger" name="removePayment" value="true">Remove</button>
+					</form>
+				</div>
+			</div>
+			<hr>
+		{% endfor %}
 	</body>
 </html>
 {% endblock %}

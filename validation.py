@@ -37,8 +37,8 @@ def edu_email(email):
 	else:
 		return None
 
-def make_salt():
-	return ''.join(random.choice(string.letters) for x in xrange(5))
+def make_salt(n = 5):
+	return ''.join(random.choice(string.letters) for x in xrange(n))
 
 def make_pw_hash(name, pw):
 	salt = make_salt()

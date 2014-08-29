@@ -52,16 +52,8 @@ function calcRoute() {
   });
 }
   </script>
-  {% if ride.passIds %}
-  {% if (ride.passIds != "") %}
-  {% set seatsLeft = ride.passengerMax - (ride.passIds.split(',')|length) %}
-  {% else %}
-  {% set seatsLeft = ride.passengerMax %}
-  {% endif %}
-  {% else %}
-  {% set seatsLeft = ride.passengerMax %}
-  {% endif %}
-
+  
+  {% set seatsLeft = ride.seatsLeft %}
   {% if seatsLeft > 0 %}
   <col width="40%">
   <col width="40%">
@@ -93,7 +85,7 @@ function calcRoute() {
 	
 	<tr>
 		<form method="post"> 
-			<input type="hidden" name="driverId" value={{ride.driverId}} />
+			<input type="hidden" name="driverId" value={{ride.driver.key().id()}} />
 			<input type="hidden" name="rideId" value={{ride.key().id()}} />
 		<td>
 			<textarea class="form-control" style="background-color: linen" name="message" placeholder="Message for the driver. Include if you would like to join for all or part of the route." rows="3"></textarea>
@@ -112,9 +104,9 @@ function calcRoute() {
   {% endif %}
 </table>
 <hr>
-
-<script src="https://code.jquery.com/jquery.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
+{% if error %}
+<div align="center" style="margin-top: 20px; color: red">{{ error }}</div>
+{% endif %}
 </body>
 
 </html>

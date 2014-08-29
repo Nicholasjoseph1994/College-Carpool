@@ -6,7 +6,20 @@
 		<title>College Carpool</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-		<link href="/static/css/base.css" rel="stylesheet">
+		<!--<link href="/static/css/base.css" rel="stylesheet">-->
+		<style>
+			body { padding-top: 70px; padding-left: 20px; background: rgba(230, 230, 255, .5); }
+	
+			li { padding-right: 50px; }			
+						
+			.flex-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(0, 0, 255, 0.3); 
+				color:rgb(255,255,255); border-radius: 1em; text-align: center; }
+			
+			.flex2-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(255, 255, 0, 0.3);
+				color:rgb(0,0,0); border-radius: 1em; text-align: center; }
+			
+			.hidden { display: none; }
+		</style>
 		<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="_ah/channel/jsapi"></script>
 	</head>
@@ -17,6 +30,7 @@
 				<li><a href="/home">Home</a></li>
 				<li><a href="/postride">Post a Trip</a></li>
 				<li><a href="/view">View Rides</a></li>
+				<li><a href="/payments">Payments</a></li>
 				<li>
 					<a href="/notification">Notifications
 						{% if notification_count == 0 %}
@@ -30,27 +44,37 @@
 				</li>
 				<li>
 				{% if venmo_username %}
-				<a id='venmologout' title='Press to Logout' href=''>Signed into Venmo ({{ venmo_username }})</a>
+				<a id='venmologout' title='Press to Logout' href=''>Log out of Venmo</a>
 				{% else %}
 				<a id='venmologin' href="https://api.venmo.com/v1/oauth/authorize?client_id={{ CLIENT_ID }}&scope=make_payments%20access_profile%20access_balance%20access_email&response_type=code">Connect Venmo</a></li> 
 				{% endif %}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-		<!---		<li><a href="signup">Sign Up</a></li>
-				<li><a href="login">Log In</a></li>-->
-				<li><a>Hi, {{username}}</a></li>
-				<li><a href="logout">Log Out</a></li>
+				<li><a href="/admin">Hi, {{username}}</a></li>
+				<li><a href="/logout">Log Out</a></li>
 			</ul>
 		</nav>
 		
 		<script>
+			{% if username == "guest" %}
+			$(document).ready(function () {
+				$("button[type='submit']").prop("disabled", true);
+			});
+			{% endif %}
+		
 			var nextURL = '?next=' + window.location.pathname;
 			$("#venmologout").attr("href", '/venmo-logout' + nextURL);
-			$("#venmologin").attr("href", $("#venmologin").attr("href") + "&redirect_uri=" + window.location.origin + "/oauth-authorized" + nextURL);
+			
+			var venmo_url = window.location.origin
+			if(venmo_url.match('^http://')){
+			     venmo_url = venmo_url.replace("http://","https://")
+			}
+			$("#venmologin").attr("href", $("#venmologin").attr("href") + "&redirect_uri=" + venmo_url + "/oauth-authorized" + nextURL);
 			
 			var state = { 
 				username: '{{ username }}',
 				token: '{{ token }}',
+				venmo_token: '{{ venmo_token }}',
 				notification_count: parseInt('{{ notification_count }}')
 			};
 						    
@@ -83,6 +107,16 @@
 			    socket.onmessage = onMessage;
 			    socket.onerror = function(e){};
 	            socket.onclose = function(){};
+		    }
+
+		    if (state.venmo_token) {
+		    	$.get("/update-venmo", { access_token: state.venmo_token }, 
+					 function (resp) {
+					 	js = JSON.parse(resp);
+					  	balance = js.balance;
+					  	$("#venmologout").html($("#venmologout").html() + " ($" + balance + ")");
+					 }
+				);
 		    }
 		</script>
 	{% block content %}

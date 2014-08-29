@@ -34,6 +34,15 @@
 	});
 </script>
 
+		
+<script> 
+{% if username == "guest" %}
+	$(document).ready(function () {
+		$("button[type='submit']").prop("disabled", false);
+	});
+{% endif %}
+</script>
+		
 <table>
 	<col width="90%"/>
 	<tr>
@@ -85,15 +94,7 @@
 
 </style>
   {% for ride in rides %}
-  {% if ride.passIds %}
-  {% if (ride.passIds != "") %}
-  {% set seatsLeft = ride.passengerMax - (ride.passIds.split(',')|length) %}
-  {% else %}
-  {% set seatsLeft = ride.passengerMax %}
-  {% endif %}
-  {% else %}
-  {% set seatsLeft = ride.passengerMax %}
-  {% endif %}
+  {% set seatsLeft = ride.seatsLeft %}
 
   {% if seatsLeft > 0 %}
   <col width="40%">
@@ -133,8 +134,6 @@
 </table>
 <hr>
 
-<script src="https://code.jquery.com/jquery.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
 </body>
 
 </html>
