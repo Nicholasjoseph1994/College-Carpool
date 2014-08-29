@@ -39,7 +39,14 @@ class View(Handler):
 			destLocation = Geocoder.geocode(self.request.get('dest'))
 			rides = sorted(rides,
 					key=lambda x: self.getLocationInfo(startLocation, Geocoder.geocode(x.start))['distance']['value'] +
-					getLocationInfo(Geocoder.geocode(x), destLocation)['distance']['value'])
+					self.getLocationInfo(Geocoder.geocode(x), destLocation)['distance']['value'])
 		self.render("rideSearch.html", rides=rides)
 	def post(self):
-		self.redirect('/'+self.request.get('rideId'))
+		process = self.request.get('process')
+		if process == 'more_info':
+			self.redirect('/'+self.request.get('rideId'))
+		elif process == 'sort':
+			#keep working here redirect to get request.
+			self.redirect('/view?sort='+self.request.get('searchOptions')
+					+ '&start=' + self.request.get('start')
+					+ '&dest=' + self.request.get('dest'))

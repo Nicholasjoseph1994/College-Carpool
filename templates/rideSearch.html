@@ -44,27 +44,30 @@
     	</td>
 		<td>
 			<!-- Single button -->
-			<div id="search-dropdown" position=fixed;>
-				<select class="btn btn-info dropdown-toggle" id="searchOptions" style="height:40px;width:168px;">
-					<option value="time">Time</option>
-					<option value="cost">Cost</option>
-					<option value="start">Start</option>
-					<option value="dest">Destination</option>
-					<option value="start_and_dest">Start And Destination</option>
-				</select>
-			</div>
+			<form method="post" class="form-horizontal" role="form">
+				<div id="search-dropdown" position=fixed;>
+					<select class="btn btn-info dropdown-toggle" name="searchOptions" id="searchOptions" style="height:40px;width:168px;">
+						<option value="time">Time</option>
+						<option value="cost">Cost</option>
+						<option value="start">Start</option>
+						<option value="dest">Destination</option>
+						<option value="start_and_dest">Start And Destination</option>
+					</select>
+				</div>
 		</td>
 		<td>
 			<div id="search-fields">
-				<form class="form-horizontal" role="form">
-					<div class="form-group" id='start'>
+					<input type="hidden" name="process" value="sort">
+					<div class="form-group" id="start">
 						<label for="start">Starting location:</label>
-						<input width = 2000px type="text" class="form-control" id="start" placeholder="Where are you starting?">
+						<input width = 2000px type="text" class="form-control" id="start" name="start" placeholder="Where are you starting?"/>
 					</div>
-					<div class="form-group" id='dest'>
+					<div class="form-group" id="dest">
 						<label for="destination">Destination:</label>
-						<input type="text" class="form-control" id="destination" placeholder="Where are you going?">
+						<input type="text" class="form-control" id="destination" name="dest" placeholder="Where are you going?"/>
 					</div>
+					<button style="border:none; background:none; padding:0; text-align:left" name="submit"></button>
+					
 				</form>	
 			</div>
 		</td>
@@ -111,6 +114,7 @@
     </tr>
 	<tr>
 		<form method="post"> 
+			<input type="hidden" name="process" value="more_info">
 			<input type="hidden" name="driverId" value={{ride.driverId}} />
 			<input type="hidden" name="rideId" value={{ride.key().id()}} />
 		<td>
