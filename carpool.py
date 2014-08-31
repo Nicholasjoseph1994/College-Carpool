@@ -3,7 +3,6 @@ import webapp2
 
 sys.path.append('handlers')
 sys.path.append('lib')
-from MainPage import MainPage
 from Home import Home
 from Signup import Signup
 from PostRide import PostRide
@@ -28,7 +27,7 @@ config['webapp2_extras.sessions'] = {
     'secret_key': constants.APP_SECRET
 }
 
-application = webapp2.WSGIApplication([ ('/', MainPage),
+application = webapp2.WSGIApplication([ ('/', Home),
 										('/home', Home),
 										('/signup', Signup),
 										('/postride', PostRide),
