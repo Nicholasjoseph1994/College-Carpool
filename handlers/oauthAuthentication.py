@@ -16,9 +16,12 @@ class oauthAuthentication(Handler):
 		
 		# update user venmo info like email and venmoID
 		db_user = User.get_by_id(self.getUser())
-		db_user.venmoID = int(response_dict.get('user').get('id'))
-		db_user.venmo_email = response_dict.get('user').get('email')
-		db_user.put()
+		if db_user.permission == "guest":
+			pass
+		else:
+			db_user.venmoID = int(response_dict.get('user').get('id'))
+			db_user.venmo_email = response_dict.get('user').get('email')
+			db_user.put()
 		
 		access_token = response_dict.get('access_token')
 		user = response_dict.get('user').get('username')
