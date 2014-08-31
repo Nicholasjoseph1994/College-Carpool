@@ -26,6 +26,8 @@ li { padding-right: 50px; }
 	top: 55px;
 	right: 100px;
 	width: 450px;
+}
+	`
 .flex2-item { flex: 0 20%; padding:1%; margin-bottom:1em; background: rgba(255, 255, 0, 0.3);
 	color:rgb(0,0,0); border-radius: 1em; text-align: center; }
 
